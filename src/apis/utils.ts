@@ -1,14 +1,10 @@
 import { ApiConfig } from "@/config";
-import { getAuthHeader, makeAuthHeader } from "./utils";
-
-export const ApiRoutes = {
-  items: "items",
-};
 
 // Fetch wrapper to do request
 export const fetchData = async <T = any>(
   endpoint: string,
-  params: FetchParams = {}
+  params: FetchParams = {},
+  cache: RequestCache = "default"
 ) => {
   const { method = "GET", body, headers = {}, token } = params;
   const fullUrl = `${ApiConfig.url}/${endpoint}`;
@@ -19,6 +15,7 @@ export const fetchData = async <T = any>(
   const reqInit: RequestInit = {
     headers: reqHeaders,
     method,
+    cache,
   };
   if (body) {
     reqInit.body = JSON.stringify(body);
@@ -30,7 +27,13 @@ export const fetchData = async <T = any>(
   return payload.data;
 };
 
-export const getItem = (itemId: string) => {
-  const endpoint = `${ApiRoutes.items}/${itemId}`;
-  return fetchData<{ item: Item }>(endpoint);
+export const makeAuthHeader = (token?: string) => ({
+  Authorization: `Bearer ${token}`,
+});
+
+export const getAuthHeader = (token?: string) => {
+  if (!token) {
+    token = localStorage.getItem("token") ?? undefined;
+  }
+  return makeAuthHeader(token);
 };
