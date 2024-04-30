@@ -1,0 +1,33 @@
+.login-page {
+  flex: 1;
+}
+
+.login-card {
+  padding: 36px;
+
+  position: absolute;
+  top: 26%;
+}
+
+.tabs {
+  margin-bottom: 32px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form {
+  row-gap: 16px;
+
+  width: 400px;
+
+  :global(.label) {
+    text-transform: capitalize;
+    margin-bottom: -4px;
+  }
+
+  button {
+    margin-top: 16px;
+
+    height: 50px;
+  }
+}

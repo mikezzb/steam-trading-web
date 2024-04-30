@@ -1,0 +1,29 @@
+.header {
+  height: 64px;
+  width: 100%;
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left-row {
+  column-gap: 16px;
+}
+
+.logo {
+  position: relative;
+  width: 120px;
+  height: 62px;
+  cursor: pointer;
+}
+
+.price-menu {
+  > button {
+    span {
+      margin-left: 6px;
+    }
+  }
+}
