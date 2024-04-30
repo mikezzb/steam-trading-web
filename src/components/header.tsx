@@ -4,12 +4,20 @@ import styles from "@/styles/components/header.module.scss";
 import clsx from "clsx";
 import Image from "next/image";
 import { useConfigContext, useUserContext } from "@/stores";
-import { Avatar, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import Currency from "@/utils/currency";
 import { observer } from "mobx-react-lite";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthState } from "@/types/ui";
 import { protectedRoutes } from "@/config";
+import { MdLogout } from "react-icons/md";
 
 type LogoProps = {
   onClick?: () => void;
@@ -50,7 +58,12 @@ const PriceMenu: FC = () => {
         {configStore.currency}
         <span>▼</span>
       </Button>
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+      <Menu
+        id="price-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
         {Currency.currencies.map((currency) => (
           <MenuItem key={currency} onClick={() => handleItemClick(currency)}>
             {currency}
@@ -81,9 +94,23 @@ const AccountMenu: FC<AccountMenuProps> = () => {
 
   return (
     <>
-      <IconButton>
+      <IconButton onClick={onClick}>
         <Avatar>{userStore.user?.username[0]}</Avatar>
       </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={onClose}
+        onClick={onClose}
+        id="account-menu"
+      >
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <MdLogout />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
     </>
   );
 };
@@ -116,7 +143,7 @@ const Header: FC = () => {
   return (
     <header className={clsx(styles["header"], "row")}>
       <Logo onClick={() => router.push("/")} />
-      <div className={clsx(styles["left-row"], "row")}>
+      <div className={clsx(styles["left-row"], "row center")}>
         <PriceMenu />
         {userStore.loading ? null : renderUserSection()}
       </div>
