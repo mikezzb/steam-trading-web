@@ -45,19 +45,27 @@ const ItemCard: FC<ItemCardProps> = ({ item, width, height }) => {
 };
 
 const ItemList: FC = () => {
-  const { isPending, isFetching, isError, data, fetchNextPage, hasNextPage } =
-    useInfiniteQuery<ItemsData, Error>({
-      queryKey: [ApiRoutes.items],
-      queryFn: ({ pageParam }) => getItems({ page: pageParam }),
-      getNextPageParam: getNextPageParam,
-      initialPageParam: 1,
-    });
+  const {
+    isPending,
+    isLoading,
+    isFetching,
+    isError,
+    data,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery<ItemsData, Error>({
+    queryKey: [ApiRoutes.items],
+    queryFn: ({ pageParam }) => getItems({ page: pageParam }),
+    getNextPageParam: getNextPageParam,
+    initialPageParam: 1,
+  });
 
   const { width, height } = useWindowDimensions();
 
-  if (isPending) return <Loading />;
-
   if (isError) return <ErrorCard />;
+
+  // initial loading
+  if (isLoading || !data) return <Loading grow />;
 
   const loadMoreItems = async (): Promise<void> => {
     console.log(`load more items`);
@@ -72,14 +80,12 @@ const ItemList: FC = () => {
   const totalItems = data.pages[0].total;
   const gridConfigs = getItemGridConfigs(totalItems, width, height);
 
-  console.log(`page items:`, pageItems);
-
   const isItemLoaded = (index: number) =>
     !hasNextPage || index < pageItems.length;
 
   const renderItemCard = ({ index, style }: any) => {
     if (!isItemLoaded(index)) {
-      return <div style={style}>Loading...</div>;
+      return null;
     }
     return (
       <div style={style}>
@@ -107,6 +113,7 @@ const ItemList: FC = () => {
 
   return (
     <div className={clsx(styles["item-list"])}>
+      {isPending && <Loading fixed />}
       <AutoSizer>
         {({ width, height }) => (
           <InfiniteLoader
