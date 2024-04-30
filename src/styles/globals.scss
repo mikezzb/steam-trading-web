@@ -1,3 +1,5 @@
+@import "typography.scss";
+
 :root {
   --white: #fff;
   --black: #000;
@@ -17,6 +19,9 @@
   --red-700: #b91c1c;
   --brand-purple: #ab68ff;
 
+  --primary: #ff5252;
+  --secondary: #52ffff;
+
   --error: var(--red-500);
   --background-color: var(--gray-800);
   --background-secondary: var(--gray-750);
@@ -24,7 +29,6 @@
   --text: var(--gray-50);
 
   --border-radius: 8px;
-
   --item-gap: 10px;
 }
 
@@ -77,6 +81,10 @@ a {
 .label {
   font-size: 14px;
   cursor: pointer;
+}
+
+.caption {
+  @extend %caption;
 }
 
 .input-container {

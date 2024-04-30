@@ -1,4 +1,7 @@
 import { ItemGridConfig, UiConfig } from "@/config";
+import Currency from "./currency";
+import { Item } from "@/types/transformed";
+import { PRICE_MAX } from "@/constants";
 
 // return react-window compatible grid configs
 export const getItemGridConfigs = (

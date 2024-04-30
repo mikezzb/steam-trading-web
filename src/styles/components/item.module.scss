@@ -1,0 +1,22 @@
+@import "../typography.scss";
+
+.item-card {
+}
+
+.item-price {
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.item-name {
+  color: var(--secondary);
+}
+
+.item-skin {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.item-exterior {
+  @extend %caption;
+}

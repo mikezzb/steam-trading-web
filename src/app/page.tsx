@@ -17,32 +17,10 @@ import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { getItemGridConfigs } from "@/utils/ui";
 import { ItemGridConfig, UiConfig } from "@/config";
 import AutoSizer from "react-virtualized-auto-sizer";
-
-type ItemCardProps = {
-  item: Item;
-  width: number;
-  height: number;
-};
-
-const ItemCard: FC<ItemCardProps> = ({ item, width, height }) => {
-  return (
-    <Paper
-      className={clsx(styles["item-card"], "column center")}
-      style={{
-        width: width,
-        height: height,
-      }}
-    >
-      <Image
-        src={`/images/previews/${item._id}.png`}
-        alt={item.name}
-        width={72}
-        height={72}
-      />
-      <div>{item.name}</div>
-    </Paper>
-  );
-};
+import { decodeItemName } from "@/utils/cs";
+import { ItemCard } from "@/components/item";
+import { Item } from "@/types/transformed";
+import { ItemsData } from "@/types/apis";
 
 type ItemRowProps = {
   items: Item[];
@@ -183,7 +161,7 @@ const ItemFilterBar: FC = () => {
 const Home: FC = () => {
   const uiStore = useUIContext();
   return (
-    <main className={clsx(styles["home"], "row center")}>
+    <main className={clsx(styles["home"], "row")}>
       <ItemFilterBar />
       <ItemList />
     </main>

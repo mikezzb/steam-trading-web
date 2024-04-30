@@ -1,6 +1,7 @@
 "use client";
 
-import { ApiConfig, ErrorCode } from "@/config";
+import { ApiConfig } from "@/config";
+import { ErrorCode } from "@/constants";
 import { uiStore } from "@/stores";
 import { FCC } from "@/types/ui";
 import {
@@ -10,8 +11,8 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { useState } from "react";
-
 const handleQueryError = (error: Error) => {
+  console.error("query error", error);
   uiStore.enqueueSnackbar({
     message: error.message || "unknown error",
   });

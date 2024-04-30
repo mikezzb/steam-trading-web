@@ -1,4 +1,6 @@
-import { ApiConfig, ErrorCode } from "@/config";
+import { ApiConfig } from "@/config";
+import { ErrorCode } from "@/constants";
+import { DataWithPaging, FetchParams, ResPayload } from "@/types/apis";
 
 const defaultHeaders = {
   "Content-Type": "application/json",

@@ -37,6 +37,9 @@ const PriceMenu: FC = () => {
   const handleItemClick = (currency: string) => {
     configStore.setCurrency(currency);
     handleClose();
+    // TODO: update prices dynamically by making currency observable?
+    // refresh
+    location.reload();
   };
 
   return (

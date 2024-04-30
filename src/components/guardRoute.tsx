@@ -4,16 +4,19 @@ import { AuthState } from "@/types/ui";
 import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { ComponentType, FC, useEffect, useState } from "react";
 import Loading from "./loading";
 
 type Options = {};
 
-type HOC = (Component: FC<any>, options?: Options) => FC;
+type HOC = <T extends {}>(
+  Component: ComponentType<T>,
+  options?: Options
+) => FC<T>;
 
 /** Guard route to check if user is authenticated */
 const guard: HOC = (Component, options = {}) => {
-  const Guard: FC = (props) => {
+  const Guard: FC<any> = (props) => {
     const [authState, setAuthState] = useState(AuthState.INIT);
     const userStore = useUserContext();
     const uiStore = useUIContext();

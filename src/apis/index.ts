@@ -1,4 +1,7 @@
 import { fetchData } from "./utils";
+import { formatItemData, formatItemsData } from "./format";
+import { ItemData, ItemDataDTO, ItemsData, ItemsDataDTO } from "@/types/apis";
+import { UserDTO } from "@/types/dtos";
 
 export const ApiRoutes = {
   items: "items",
@@ -6,15 +9,17 @@ export const ApiRoutes = {
   users: "users",
 };
 
-export const getItem = (itemId: string) => {
+export const getItem = async (itemId: string) => {
   const endpoint = `${ApiRoutes.items}/${itemId}`;
-  return fetchData<{ item: Item }>(endpoint);
+  const data = await fetchData<ItemDataDTO>(endpoint);
+  return formatItemData(data);
 };
 
-export const getItems = (params: Record<string, any>) => {
+export const getItems = async (params: Record<string, any>) => {
   const searchParams = new URLSearchParams(params);
   const endpoint = `${ApiRoutes.items}?${searchParams}`;
-  return fetchData<ItemsData>(endpoint);
+  const data = await fetchData<ItemsDataDTO>(endpoint);
+  return formatItemsData(data);
 };
 
 export const getItemPreviewUrl = (itemId: string) => {
@@ -29,7 +34,7 @@ export const getBuffIds = async () => {
 
 export const getUserByToken = async () => {
   const endpoint = `${ApiRoutes.auth}`;
-  return fetchData<User>(endpoint);
+  return fetchData<UserDTO>(endpoint);
 };
 
 type LoginForm = {
@@ -39,7 +44,7 @@ type LoginForm = {
 
 export const login = async (body: LoginForm) => {
   const endpoint = `${ApiRoutes.auth}`;
-  return fetchData<User>(endpoint, { body, method: "POST" }, "no-cache");
+  return fetchData<UserDTO>(endpoint, { body, method: "POST" }, "no-cache");
 };
 
 type SignUpForm = {
@@ -48,5 +53,5 @@ type SignUpForm = {
 
 export const signup = async (body: SignUpForm) => {
   const endpoint = `${ApiRoutes.users}`;
-  return fetchData<User>(endpoint, { body, method: "POST" }, "no-cache");
+  return fetchData<UserDTO>(endpoint, { body, method: "POST" }, "no-cache");
 };

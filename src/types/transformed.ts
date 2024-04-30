@@ -1,22 +1,29 @@
-interface MarketPrice {
-  price: string;
-  updatedAt: Date;
-}
+// transformed types from DTOs
 
-interface Item {
+import Currency from "@/utils/currency";
+
+export type PriceInfo = {
+  market: string;
+  price: Currency;
+  updatedAt: Date;
+};
+
+export interface Item {
   _id: string;
+  fullName: string;
   name: string;
+  exterior: string;
+  skin: string;
   iconUrl: string;
-  buffPrice: MarketPrice;
-  uuPrice: MarketPrice;
-  igxePrice: MarketPrice;
-  steamPrice: MarketPrice;
+  prices: Record<string, PriceInfo>;
+
+  lowestPrice?: PriceInfo;
 }
 
-interface Listing {
+export interface Listing {
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   name: string;
   market: string;
   price: string;
@@ -32,7 +39,7 @@ interface Listing {
   instanceId: string;
 }
 
-interface Subscription {
+export interface Subscription {
   _id: string;
   name: string;
   rarity?: string;
@@ -42,7 +49,7 @@ interface Subscription {
   ownerId: string;
 }
 
-interface User {
+export interface User {
   _id: string;
   username: string;
   password: string;
@@ -53,16 +60,16 @@ interface User {
   favListingIds: string[];
 }
 
-interface TransactionMetadata {
+export interface TransactionMetadata {
   market: string;
   assetId: string;
 }
 
-interface Transaction {
+export interface Transaction {
   _id: string;
   metadata: TransactionMetadata;
   name: string;
-  createdAt: Date;
+  createdAt: string;
   price: string;
   previewUrl: string;
   goodsId: number;
