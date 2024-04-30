@@ -55,5 +55,5 @@ export const ItemGridConfig = {
 export const UiConfig = {
   sideBarWidth: 292,
   headerHeight: 64,
-  gap: 16,
+  itemGap: 10,
 };

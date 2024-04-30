@@ -60,5 +60,6 @@ export const getNextPageParam = (
 ) => {
   const { total, page, pageSize } = lastPage;
   const totalPages = Math.ceil(total / pageSize);
-  return page < totalPages ? page + 1 : undefined;
+  const nextPage = page < totalPages ? page + 1 : undefined;
+  return nextPage;
 };

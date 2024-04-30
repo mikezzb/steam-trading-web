@@ -2,7 +2,7 @@
 import Image from "next/image";
 import styles from "@/styles/pages/home.module.scss";
 import { useUIContext } from "@/stores";
-import { Button } from "@mui/material";
+import { Button, Paper } from "@mui/material";
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ type ItemCardProps = {
 
 const ItemCard: FC<ItemCardProps> = ({ item, width, height }) => {
   return (
-    <div
+    <Paper
       className={clsx(styles["item-card"], "column center")}
       style={{
         width: width,
@@ -40,6 +40,34 @@ const ItemCard: FC<ItemCardProps> = ({ item, width, height }) => {
         height={72}
       />
       <div>{item.name}</div>
+    </Paper>
+  );
+};
+
+type ItemRowProps = {
+  items: Item[];
+  style: any;
+  itemWidth: number;
+  itemHeight: number;
+};
+
+const ItemRow: FC<ItemRowProps> = ({
+  items,
+  style,
+  itemWidth,
+  itemHeight: itemHeightWithGap,
+}) => {
+  const itemHeight = itemHeightWithGap - UiConfig.itemGap;
+  return (
+    <div className={clsx(styles["item-row"], "row")} style={style}>
+      {items.map((item) => (
+        <ItemCard
+          key={item._id}
+          item={item}
+          width={itemWidth}
+          height={itemHeight}
+        />
+      ))}
     </div>
   );
 };
@@ -80,36 +108,35 @@ const ItemList: FC = () => {
   const totalItems = data.pages[0].total;
   const gridConfigs = getItemGridConfigs(totalItems, width, height);
 
-  const isItemLoaded = (index: number) =>
-    !hasNextPage || index < pageItems.length;
-
-  const renderItemCard = ({ index, style }: any) => {
-    if (!isItemLoaded(index)) {
-      return null;
+  const isRowLoaded = (index: number) => {
+    if (!hasNextPage) {
+      return true;
     }
+    const loadedRows = Math.ceil(pageItems.length / gridConfigs.cols);
+    return index < loadedRows;
+  };
+
+  const renderItemRow = ({ index, style }: any) => {
+    // check if item is loaded
+    if (!pageItems[index]) {
+      return;
+    }
+    // get items based on row index
+    const start = index * gridConfigs.cols;
+    const end = Math.min(start + gridConfigs.cols, pageItems.length);
+    const items = pageItems.slice(start, end);
     return (
-      <div style={style}>
-        <ItemCard
-          item={pageItems[index]}
-          width={gridConfigs.itemWidth}
-          height={gridConfigs.itemHeight}
-        />
-      </div>
+      <ItemRow
+        items={items}
+        style={style}
+        itemWidth={gridConfigs.itemWidth}
+        itemHeight={gridConfigs.itemHeight}
+      />
     );
   };
 
-  const getListSize = () => {
-    const horiSpaceLeft = width - UiConfig.sideBarWidth;
-    const vertSpaceNeeded = gridConfigs.rows * gridConfigs.itemHeight;
-
-    return {
-      width: horiSpaceLeft,
-      height: vertSpaceNeeded,
-    };
-  };
-
-  const listSize = getListSize();
-  const itemCount = hasNextPage ? pageItems.length + 1 : pageItems.length;
+  const loadedRows = Math.ceil(pageItems.length / gridConfigs.cols);
+  const rowCount = hasNextPage ? loadedRows + 1 : loadedRows;
 
   return (
     <div className={clsx(styles["item-list"])}>
@@ -117,8 +144,8 @@ const ItemList: FC = () => {
       <AutoSizer>
         {({ width, height }) => (
           <InfiniteLoader
-            isItemLoaded={isItemLoaded}
-            itemCount={itemCount}
+            isItemLoaded={isRowLoaded}
+            itemCount={rowCount}
             loadMoreItems={loadMoreItems}
           >
             {({ onItemsRendered, ref }) => (
@@ -126,28 +153,31 @@ const ItemList: FC = () => {
                 ref={ref}
                 height={height}
                 width={width}
-                itemCount={itemCount}
+                itemCount={rowCount}
                 onItemsRendered={onItemsRendered}
                 itemSize={gridConfigs.itemHeight}
               >
-                {renderItemCard}
+                {renderItemRow}
               </FixedSizeList>
             )}
           </InfiniteLoader>
         )}
       </AutoSizer>
-      {/* <Button
-        onClick={() => fetchNextPage()}
-        disabled={!hasNextPage || isFetching}
-      >
-        {isFetching ? "Loading more..." : hasNextPage ? "Load More" : "No more"}
-      </Button> */}
     </div>
   );
 };
 
 const ItemFilterBar: FC = () => {
-  return <div>Filter Bar</div>;
+  return (
+    <div
+      className={clsx(styles["filter-bar"], "row center")}
+      style={{
+        width: UiConfig.sideBarWidth,
+      }}
+    >
+      Filter Bar
+    </div>
+  );
 };
 
 const Home: FC = () => {

@@ -1,0 +1,21 @@
+.home {
+  flex: 1;
+  width: 100%;
+}
+
+.item-card {
+}
+
+.item-list {
+  display: block; // must be block to work with auto-sizer
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.item-row {
+  // margin: 0 var(--item-gap) var(--item-gap) var(--item-gap);
+  column-gap: var(--item-gap);
+}
+
+.filter-bar {
+}
