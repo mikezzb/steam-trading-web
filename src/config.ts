@@ -46,3 +46,14 @@ export const CurrencySymbol: Record<string, string> = {
   EUR: "€",
   JPY: "¥",
 };
+
+export const ItemGridConfig = {
+  itemWidth: 300,
+  itemHeight: 400,
+};
+
+export const UiConfig = {
+  sideBarWidth: 292,
+  headerHeight: 64,
+  gap: 16,
+};
