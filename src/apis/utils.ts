@@ -1,4 +1,8 @@
-import { ApiConfig } from "@/config";
+import { ApiConfig, ErrorCode } from "@/config";
+
+const defaultHeaders = {
+  "Content-Type": "application/json",
+};
 
 // Fetch wrapper to do request
 export const fetchData = async <T = any>(
@@ -9,6 +13,7 @@ export const fetchData = async <T = any>(
   const { method = "GET", body, headers = {}, token } = params;
   const fullUrl = `${ApiConfig.url}/${endpoint}`;
   const reqHeaders = {
+    ...defaultHeaders,
     ...getAuthHeader(token),
     ...headers,
   };
@@ -21,9 +26,17 @@ export const fetchData = async <T = any>(
     reqInit.body = JSON.stringify(body);
   }
 
-  console.log("fetchData", reqInit.method, fullUrl);
+  console.log("fetchData", fullUrl, reqInit);
+
   const res = await fetch(fullUrl, reqInit);
   const payload: ResPayload<T> = await res.json();
+
+  // check payload code
+  if (!payload?.code || payload.code !== ErrorCode.SUCCESS) {
+    console.log(payload);
+    throw new Error(payload?.msg);
+  }
+
   return payload.data;
 };
 
@@ -36,4 +49,16 @@ export const getAuthHeader = (token?: string) => {
     token = localStorage.getItem("token") ?? undefined;
   }
   return makeAuthHeader(token);
+};
+
+// Get next page param for useInfiniteQuery
+export const getNextPageParam = (
+  lastPage: DataWithPaging,
+  allPages: DataWithPaging[],
+  lastPageParam: unknown,
+  allPagesParam: unknown[]
+) => {
+  const { total, page, pageSize } = lastPage;
+  const totalPages = Math.ceil(total / pageSize);
+  return page < totalPages ? page + 1 : undefined;
 };

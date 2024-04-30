@@ -8,3 +8,10 @@ export type FCC<T = {}> = React.FC<
 >;
 
 export interface SnackbarConfig extends SnackbarProps {}
+
+export enum AuthState {
+  INIT,
+  PENDING,
+  LOGGED_IN,
+  LOGGED_OUT,
+}

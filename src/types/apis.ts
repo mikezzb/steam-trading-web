@@ -11,8 +11,10 @@ type FetchParams = {
   token?: string;
 };
 
-type DataWithPaging<T> = {
+type DataWithPaging<T = {}> = {
   total: number;
+  page: number;
+  pageSize: number;
 } & T;
 
 type ItemsData = DataWithPaging<{
