@@ -1,11 +1,13 @@
 "use client";
 import { makeObservable, action } from "mobx";
 import { Storage } from "../utils/storage";
+import { isNaivePrimitive } from "@/utils";
 
 class PersistedStore {
   onLoadKeys?: string[];
   onResetKeys?: string[];
   defaultValues: Record<string, any>;
+  jsonParseConfig: Record<string, boolean> = {};
 
   constructor(
     onLoadKeys?: string[],
@@ -15,13 +17,22 @@ class PersistedStore {
     this.onLoadKeys = onLoadKeys;
     this.onResetKeys = onResetKeys;
     this.defaultValues = defaultValues || {};
+    this.jsonParseConfig = Object.keys(this.defaultValues).reduce<any>(
+      (acc, key) => {
+        const isPrimitive = isNaivePrimitive(this.defaultValues[key]);
+        acc[key] = isPrimitive;
+        console.log("key: ", key, "isPrimitive: ", isPrimitive);
+        return acc;
+      },
+      {}
+    );
     makeObservable(this, {
       update: action,
       set: action,
       remove: action,
       load: action,
+      clear: action,
       reset: action,
-      init: action,
     });
   }
   /** Non persistent update */
@@ -31,7 +42,7 @@ class PersistedStore {
   /** Persistent update */
   set(k: string, v: any) {
     this.update(k, v);
-    Storage.setItem(k, v);
+    Storage.setItem(k, v, this.jsonParseConfig[k]);
   }
   remove(k: string) {
     this.update(k, undefined);
@@ -41,7 +52,7 @@ class PersistedStore {
     const defaultValues = { ...this.defaultValues };
     if (this.onLoadKeys) {
       this.onLoadKeys.forEach((key) => {
-        const retrieved = Storage.getItem(key);
+        const retrieved = Storage.getItem(key, this.jsonParseConfig[key]);
         this.update(
           key,
           retrieved === null ? this.defaultValues[key] : retrieved
@@ -50,9 +61,9 @@ class PersistedStore {
       });
     }
     // If there are some unloaded keys in default values, load it
-    this.init(defaultValues);
+    this.reset(defaultValues);
   }
-  reset() {
+  clear() {
     const defaultValues = { ...this.defaultValues };
     if (this.onResetKeys) {
       this.onResetKeys.forEach((key) => {
@@ -61,12 +72,16 @@ class PersistedStore {
         delete defaultValues[key];
       });
     }
-    this.init(defaultValues);
+    this.reset(defaultValues);
   }
-  init(defaultValues?: Record<string, any>) {
+  reset(defaultValues?: Record<string, any>) {
     Object.entries(defaultValues || this.defaultValues).forEach(([k, v]) => {
       this.update(k, v);
     });
+  }
+
+  init() {
+    this.load();
   }
 }
 

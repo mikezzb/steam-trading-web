@@ -5,6 +5,9 @@ import { getTotalPages } from "@/utils";
 import { Metadata, ResolvingMetadata } from "next";
 import { FC } from "react";
 import ItemPage from "./item-page";
+import { Item } from "@/types/transformed";
+import { ItemsData, ItemsDataDTO } from "@/types/apis";
+import { ItemDTO } from "@/types/dtos";
 
 type Props = {
   params: {
@@ -15,14 +18,14 @@ type Props = {
 const Page: FC<Props> = (props) => <ItemPage params={props.params} />;
 
 export const fetchAllItems = async () => {
-  const items: Item[] = [];
+  const items: ItemDTO[] = [];
   let totalPages = 1;
   let page = 1;
   while (page <= totalPages) {
     // format query string
     const query = new URLSearchParams({ page: page.toString() });
     const endpoint = `items?${query}`;
-    const { items: pageItems, total } = await fetchServerData<ItemsData>(
+    const { items: pageItems, total } = await fetchServerData<ItemsDataDTO>(
       endpoint
     );
     items.push(...pageItems);

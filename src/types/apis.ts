@@ -1,4 +1,4 @@
-import { ItemDTO } from "./dtos";
+import { ItemDTO, UserDTO } from "./dtos";
 import { Item } from "./transformed";
 
 export type ResPayload<T = any> = {
@@ -35,3 +35,13 @@ export type ItemDataDTO = {
 export type ItemData = {
   item: Item;
 };
+
+export type CheckAuthDataDTO = {
+  user: UserDTO;
+};
+
+export type LoginDataDTO = {
+  token: string;
+} & CheckAuthDataDTO;
+
+export type SignUpDataDTO = {} & LoginDataDTO;

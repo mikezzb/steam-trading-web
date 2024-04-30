@@ -9,7 +9,7 @@ export function removeItem(key: string): boolean {
   }
 }
 
-export function getItem(key: string, parse: boolean = true): any {
+export function getItem(key: string, parse: boolean = false): any {
   try {
     const value = localStorage.getItem(key);
     if (value === null) {
@@ -24,7 +24,7 @@ export function getItem(key: string, parse: boolean = true): any {
 export function setItem(
   key: string,
   value: any,
-  stringify: boolean = true
+  stringify: boolean = false
 ): boolean {
   try {
     localStorage.setItem(key, stringify ? JSON.stringify(value) : value);

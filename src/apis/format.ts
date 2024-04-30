@@ -24,7 +24,6 @@ const formatItemDTO = (itemDTO: ItemDTO): Item => {
       return;
     }
 
-    console.log(marketPrice.price);
     prices[market] = {
       price: new Currency(marketPrice.price),
       updatedAt: new Date(marketPrice.updatedAt),
@@ -55,8 +54,6 @@ export const formatItemData = (data: ItemDataDTO): ItemData => ({
 });
 
 export const formatItemsData = (data: ItemsDataDTO): ItemsData => {
-  console.log(data);
-  console.log(data.items);
   return {
     ...data,
     items: data.items.map(formatItemDTO),

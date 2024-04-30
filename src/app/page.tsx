@@ -21,12 +21,15 @@ import { decodeItemName } from "@/utils/cs";
 import { ItemCard } from "@/components/item";
 import { Item } from "@/types/transformed";
 import { ItemsData } from "@/types/apis";
+import { useRouter } from "next/navigation";
+import { getItemUrl } from "@/utils/routes";
 
 type ItemRowProps = {
   items: Item[];
   style: any;
   itemWidth: number;
   itemHeight: number;
+  onItemClick: (itemId: string) => void;
 };
 
 const ItemRow: FC<ItemRowProps> = ({
@@ -34,6 +37,7 @@ const ItemRow: FC<ItemRowProps> = ({
   style,
   itemWidth,
   itemHeight: itemHeightWithGap,
+  onItemClick,
 }) => {
   const itemHeight = itemHeightWithGap - UiConfig.itemGap;
   return (
@@ -44,6 +48,7 @@ const ItemRow: FC<ItemRowProps> = ({
           item={item}
           width={itemWidth}
           height={itemHeight}
+          onClick={() => onItemClick(item._id)}
         />
       ))}
     </div>
@@ -51,6 +56,8 @@ const ItemRow: FC<ItemRowProps> = ({
 };
 
 const ItemList: FC = () => {
+  const router = useRouter();
+
   const {
     isPending,
     isLoading,
@@ -109,8 +116,13 @@ const ItemList: FC = () => {
         style={style}
         itemWidth={gridConfigs.itemWidth}
         itemHeight={gridConfigs.itemHeight}
+        onItemClick={onItemClick}
       />
     );
+  };
+
+  const onItemClick = (itemId: string) => {
+    router.push(getItemUrl(itemId));
   };
 
   const loadedRows = Math.ceil(pageItems.length / gridConfigs.cols);

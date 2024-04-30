@@ -4,17 +4,23 @@ import clsx from "clsx";
 import { FC } from "react";
 import styles from "@/styles/components/item.module.scss";
 import Image from "next/image";
-import { getItemPreviewUrl } from "@/apis";
 import Currency from "@/utils/currency";
 import { Item } from "@/types/transformed";
+import { getItemPreviewUrl } from "@/utils/routes";
 
 type ItemCardProps = {
   item: Item;
   width: number;
   height: number;
+  onClick?: () => void;
 };
 
-export const ItemCard: FC<ItemCardProps> = ({ item, width, height }) => {
+export const ItemCard: FC<ItemCardProps> = ({
+  item,
+  width,
+  height,
+  onClick,
+}) => {
   return (
     <Paper
       className={clsx(styles["item-card"], "column center")}
@@ -22,16 +28,14 @@ export const ItemCard: FC<ItemCardProps> = ({ item, width, height }) => {
         width: width,
         height: height,
       }}
+      onClick={onClick}
     >
       <div className={styles["item-price"]}>
         {item.lowestPrice?.price?.toString() || "No Listing"}
       </div>
-      <Image
-        src={getItemPreviewUrl(item._id)}
-        alt={item.fullName}
-        width={72}
-        height={72}
-      />
+      <div className={styles["item-img"]}>
+        <Image src={getItemPreviewUrl(item._id)} alt={item.fullName} fill />
+      </div>
       <div className={styles["item-name"]}>{item.name}</div>
       <div className={styles["item-skin"]}>{item.skin}</div>
       <div className={styles["item-exterior"]}>{item.exterior}</div>

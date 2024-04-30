@@ -4,6 +4,7 @@ import { ApiConfig } from "@/config";
 import { ErrorCode } from "@/constants";
 import { uiStore } from "@/stores";
 import { FCC } from "@/types/ui";
+import { handleError } from "@/utils/handlers";
 import {
   MutationCache,
   QueryCache,
@@ -11,12 +12,6 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { useState } from "react";
-const handleQueryError = (error: Error) => {
-  console.error("query error", error);
-  uiStore.enqueueSnackbar({
-    message: error.message || "unknown error",
-  });
-};
 
 // const handleQuerySuccess = (data: any, query: any) => {
 //   console.log("query success", data, query);
@@ -36,10 +31,10 @@ export const QueryProvider: FCC = ({ children }) => {
           },
         },
         queryCache: new QueryCache({
-          onError: handleQueryError,
+          onError: handleError,
         }),
         mutationCache: new MutationCache({
-          onError: handleQueryError,
+          onError: handleError,
         }),
       })
   );

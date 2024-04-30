@@ -22,6 +22,10 @@ class UIStore {
   dequeueSnackbar() {
     this.snackbarQueue.shift();
   }
+
+  enqueueError(message: string) {
+    this.enqueueSnackbar({ message });
+  }
 }
 
 export default UIStore;

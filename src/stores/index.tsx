@@ -11,7 +11,7 @@ import UserStore from "./userStore";
 
 export const configStore = new ConfigStore();
 export const uiStore = new UIStore();
-export const userStore = new UserStore();
+export const userStore = new UserStore(uiStore);
 
 const ConfigContext = createContext(configStore);
 const UIContext = createContext(uiStore);
@@ -41,8 +41,8 @@ const StoreProvider: FCC = ({ children }) => {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    configStore.load();
-    userStore.load();
+    configStore.init();
+    userStore.init();
     setIsHydrated(true);
   }, [configStore, userStore]);
 

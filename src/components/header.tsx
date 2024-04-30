@@ -3,11 +3,13 @@ import { FC, useState } from "react";
 import styles from "@/styles/components/header.module.scss";
 import clsx from "clsx";
 import Image from "next/image";
-import { useConfigContext } from "@/stores";
-import { Button, Menu, MenuItem } from "@mui/material";
+import { useConfigContext, useUserContext } from "@/stores";
+import { Avatar, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import Currency from "@/utils/currency";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { AuthState } from "@/types/ui";
+import { protectedRoutes } from "@/config";
 
 type LogoProps = {
   onClick?: () => void;
@@ -59,21 +61,64 @@ const PriceMenu: FC = () => {
   );
 };
 
+type AccountMenuProps = {};
+
+const AccountMenu: FC<AccountMenuProps> = () => {
+  const userStore = useUserContext();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const onClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const onClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    userStore.logout();
+    onClose();
+  };
+
+  return (
+    <>
+      <IconButton>
+        <Avatar>{userStore.user?.username[0]}</Avatar>
+      </IconButton>
+    </>
+  );
+};
+
+type LoginButtonProps = {
+  onClick?: () => void;
+};
+const LoginButton: FC<LoginButtonProps> = ({ onClick }) => {
+  return (
+    <Button variant="contained" onClick={onClick}>
+      Login
+    </Button>
+  );
+};
+
 const Header: FC = () => {
   const router = useRouter();
+  const userStore = useUserContext();
+
+  if (userStore.loading) return null;
+
+  const renderUserSection = () => {
+    if (userStore.loggedIn) {
+      return <AccountMenu />;
+    } else {
+      return <LoginButton onClick={() => router.push("/login")} />;
+    }
+  };
+
   return (
     <header className={clsx(styles["header"], "row")}>
       <Logo onClick={() => router.push("/")} />
       <div className={clsx(styles["left-row"], "row")}>
         <PriceMenu />
-        <Button
-          variant="contained"
-          onClick={() =>
-            router.push(`/login?redirect=${window.location.pathname}`)
-          }
-        >
-          Login
-        </Button>
+        {userStore.loading ? null : renderUserSection()}
       </div>
     </header>
   );

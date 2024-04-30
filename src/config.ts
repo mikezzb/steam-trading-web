@@ -36,7 +36,7 @@ export const CurrencySymbol: Record<string, string> = {
 
 export const ItemGridConfig = {
   itemWidth: 300,
-  itemHeight: 400,
+  itemHeight: 350,
 };
 
 export const UiConfig = {
@@ -44,3 +44,5 @@ export const UiConfig = {
   headerHeight: 64,
   itemGap: 10,
 };
+
+export const protectedRoutes = ["/items"];

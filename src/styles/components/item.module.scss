@@ -1,6 +1,8 @@
 @import "../typography.scss";
 
 .item-card {
+  row-gap: 10px;
+  cursor: pointer;
 }
 
 .item-price {
@@ -19,4 +21,10 @@
 
 .item-exterior {
   @extend %caption;
+}
+
+.item-img {
+  position: relative;
+  width: 140px;
+  height: 140px;
 }

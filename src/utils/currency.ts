@@ -20,8 +20,6 @@ class Currency {
     }
     this.value = value;
 
-    console.log("value: ", value);
-
     this.currency = currency;
   }
 

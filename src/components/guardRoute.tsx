@@ -65,7 +65,7 @@ const guard: HOC = (Component, options = {}) => {
         setAuthState(AuthState.LOGGED_OUT);
       }
       if (data) {
-        userStore.setUser(data);
+        userStore.setUser(data.user);
         setAuthState(AuthState.LOGGED_IN);
       }
     }, [error, data, userStore]);
@@ -77,7 +77,7 @@ const guard: HOC = (Component, options = {}) => {
         case AuthState.LOGGED_OUT:
           return null;
         default:
-          return <Loading />;
+          return <Loading fixed />;
       }
     };
 

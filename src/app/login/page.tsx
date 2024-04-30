@@ -81,9 +81,9 @@ const LoginPage: FC = () => {
   };
 
   useEffect(() => {
-    const user = loginMutation.data || signupMutation.data;
-    if (user) {
-      userStore.setUser(user);
+    const data = loginMutation.data ?? signupMutation.data;
+    if (data) {
+      userStore.login(data.user, data.token);
       // redirect to previous page
       const redirect = new URLSearchParams(window.location.search).get(
         "redirect"
