@@ -1,95 +1,68 @@
+"use client";
 import Image from "next/image";
-import styles from "./page.module.css";
+import styles from "@/styles/pages/home.module.scss";
+import { useUIContext } from "@/stores";
+import { Button } from "@mui/material";
+import { FC } from "react";
+import { observer } from "mobx-react-lite";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { ApiRoutes, getItems } from "@/apis";
+import Loading from "@/components/loading";
+import ErrorCard from "@/components/error-card";
+import clsx from "clsx";
+import { getNextPageParam } from "@/apis/utils";
 
-export default function Home() {
+const ItemCard: FC<{ item: Item }> = ({ item }) => {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div>
+      <Image
+        src={`/images/previews/${item._id}.png`}
+        alt={item.name}
+        width={72}
+        height={72}
+      />
+      <div>{item.name}</div>
+    </div>
+  );
+};
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+const ItemList: FC = () => {
+  const { isPending, isFetching, isError, data, fetchNextPage, hasNextPage } =
+    useInfiniteQuery<ItemsData, Error>({
+      queryKey: [ApiRoutes.items],
+      queryFn: ({ pageParam = 1 }) => getItems({ page: pageParam }),
+      getNextPageParam: getNextPageParam,
+      initialPageParam: 1,
+    });
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+  if (isPending) return <Loading />;
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+  if (isError) return <ErrorCard />;
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+  const pageItems = data.pages.flatMap((page) => page.items);
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+  return (
+    <div>
+      {pageItems.map((item) => (
+        <ItemCard key={item._id} item={item} />
+      ))}
+      <Button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetching}
+      >
+        {isFetching ? "Loading more..." : hasNextPage ? "Load More" : "No more"}
+      </Button>
+    </div>
+  );
+};
+
+const Home: FC = () => {
+  const uiStore = useUIContext();
+  return (
+    <main className={clsx(styles["home"], "column center")}>
+      <ItemList />
     </main>
   );
-}
+};
+
+export default observer(Home);
