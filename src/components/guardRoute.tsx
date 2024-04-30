@@ -26,6 +26,7 @@ const guard: HOC = (Component, options = {}) => {
       queryKey: ["user"],
       queryFn: getUserByToken,
       enabled: false,
+      retry: 0,
     });
 
     useEffect(() => {
@@ -60,11 +61,14 @@ const guard: HOC = (Component, options = {}) => {
     }, [userStore, authState, router]);
 
     useEffect(() => {
+      if (error) {
+        setAuthState(AuthState.LOGGED_OUT);
+      }
       if (data) {
         userStore.setUser(data);
         setAuthState(AuthState.LOGGED_IN);
       }
-    }, [data, userStore]);
+    }, [error, data, userStore]);
 
     const renderContent = () => {
       switch (authState) {
