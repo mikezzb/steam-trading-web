@@ -8,6 +8,7 @@ export const ApiConfig = {
 };
 
 export const AppConfig = {
+  url: "http://localhost:3000",
   name: "CS2 Trade",
   description:
     "cs2 items trade, cs2 skins trade, cs2 cheap skins, cs2 skins store, cs2 skins float ranking, cs2 skins inspect,skins trading platform",

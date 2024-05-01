@@ -37,10 +37,15 @@ export const getValidParams = (params: URLSearchParams, keys: string[]) => {
 };
 
 export const applyQueryParams = (
-  params: URLSearchParams | Record<string, string>
+  params: URLSearchParams | Record<string, string> | null,
+  baseUrl: string = ""
 ) => {
+  if (!params) {
+    // reset the query params
+    return window.history.pushState(null, "", baseUrl);
+  }
   if (!(params instanceof URLSearchParams)) {
     params = new URLSearchParams(params);
   }
-  window.history.pushState(null, "", `?${params}`);
+  window.history.pushState(null, "", `${baseUrl}?${params}`);
 };

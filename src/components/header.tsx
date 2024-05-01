@@ -23,6 +23,7 @@ import { MdKeyboardArrowDown, MdLogout, MdOutlineSearch } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { ApiRoutes, getItemFilters } from "@/apis";
 import { applyQueryParams } from "@/utils/ui";
+import { getItemUrlByName } from "@/utils/routes";
 
 type LogoProps = {
   onClick?: () => void;
@@ -137,6 +138,7 @@ const LoginButton: FC<LoginButtonProps> = ({ onClick }) => {
 };
 
 const ItemSearchBar: FC = () => {
+  const router = useRouter();
   const { data, isPending, isError } = useQuery({
     queryKey: [ApiRoutes.items, "filters"],
     queryFn: getItemFilters,
@@ -145,11 +147,12 @@ const ItemSearchBar: FC = () => {
   const names = data?.filters?.name || ["Loading..."];
   const nameSet = new Set(names);
 
-  const applySearch = (value: string) => {
+  const applySearch = async (value: string) => {
     if (value === "") {
-      applyQueryParams({});
+      applyQueryParams(null);
     } else {
-      applyQueryParams({ name: value });
+      // redirect to the specific item page
+      router.push(await getItemUrlByName(value));
     }
   };
 

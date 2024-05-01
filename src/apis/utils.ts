@@ -6,14 +6,17 @@ const defaultHeaders = {
   "Content-Type": "application/json",
 };
 
+type FetchDataParams = FetchParams & {};
+
 // Fetch wrapper to do request
 export const fetchData = async <T = any>(
   endpoint: string,
-  params: FetchParams = {},
+  params: FetchDataParams = {},
   cache: RequestCache = "default"
 ) => {
   const { method = "GET", body, headers = {}, token } = params;
-  const fullUrl = `${ApiConfig.url}/${endpoint}`;
+  // Add API url to endpoint
+  endpoint = `${ApiConfig.url}/${endpoint}`;
   const reqHeaders = {
     ...defaultHeaders,
     ...getAuthHeader(token),
@@ -28,18 +31,17 @@ export const fetchData = async <T = any>(
     reqInit.body = JSON.stringify(body);
   }
 
-  console.log("fetchData", fullUrl, reqInit);
+  try {
+    const res = await fetch(endpoint, reqInit);
+    const payload: ResPayload<T> = await res.json();
+    if (!payload?.code || payload.code !== ErrorCode.SUCCESS) {
+      throw new Error(payload?.msg);
+    }
 
-  const res = await fetch(fullUrl, reqInit);
-  const payload: ResPayload<T> = await res.json();
-
-  // check payload code
-  if (!payload?.code || payload.code !== ErrorCode.SUCCESS) {
-    console.log(payload);
-    throw new Error(payload?.msg);
+    return payload.data;
+  } catch (error) {
+    throw error;
   }
-
-  return payload.data;
 };
 
 export const makeAuthHeader = (token?: string) => ({

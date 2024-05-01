@@ -22,7 +22,15 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="en">
+    <html>
+      {/*
+      TODO: proper prefetch in nextjs
+      <link
+        rel="preload"
+        href="/data/buff/buffids.json"
+        as="fetch"
+        crossOrigin="anonymous"
+      /> */}
       <body className={inter.className}>{children}</body>
     </html>
   );

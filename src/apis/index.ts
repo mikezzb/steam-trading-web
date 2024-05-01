@@ -34,8 +34,11 @@ export const getItems = async (params: Record<string, any>) => {
 
 export const getBuffIds = async () => {
   // HTTP GET on a json file
-  const endpoint = "public/data/buff/buffids.json";
-  return fetchData<Record<string, number>>(endpoint, {}, "force-cache");
+  const endpoint = "/data/buff/buffids.json";
+  // use normal fetch
+  const response = await fetch(endpoint);
+  // parse json
+  return await response.json();
 };
 
 export const getUserByToken = async () => {
