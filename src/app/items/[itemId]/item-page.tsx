@@ -4,7 +4,7 @@ import Loading from "@/components/loading";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { FC } from "react";
-import styles from "@/styles/pages/item-page.module.scss";
+import styles from "@/styles/pages/item.module.scss";
 import clsx from "clsx";
 import guard from "@/components/guardRoute";
 import { ItemBanner } from "@/components/item";
@@ -27,7 +27,7 @@ const ItemPage: FC<ItemProps> = (props) => {
   if (error) return;
 
   return (
-    <main className={clsx(styles["item-page"], "column")}>
+    <main className={clsx(styles["item-page"], "page column")}>
       <ItemBanner item={data.item} />
     </main>
   );

@@ -15,3 +15,7 @@ export const decodeItemName = (itemFullName: string): CS2Item => {
   const [_, name, skin, exterior] = match;
   return { name, skin, exterior };
 };
+
+export const getBuffUrl = (itemId: string) => {
+  return `https://buff.163.com/goods/${itemId}?appid=730`;
+};

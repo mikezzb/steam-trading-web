@@ -1,7 +1,7 @@
 @import "../typography.scss";
 
 .item-card {
-  row-gap: 10px;
+  row-gap: 8px;
   cursor: pointer;
 }
 
@@ -10,7 +10,7 @@
   font-size: 24px;
 }
 
-.item-name {
+.item-category {
   color: var(--secondary);
 }
 
@@ -27,4 +27,40 @@
   position: relative;
   width: 140px;
   height: 140px;
+}
+
+// Banner
+
+.item-banner {
+  height: fit-content;
+}
+
+.item-detail {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  padding: 32px;
+
+  .item-category {
+    font-size: 18px;
+  }
+
+  .item-skin {
+    font-size: 22px;
+  }
+
+  .item-exterior {
+    font-size: 14px;
+  }
+
+  .item-price {
+    margin-top: 10px;
+    font-size: 38px;
+  }
+}
+
+.image-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
 }

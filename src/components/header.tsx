@@ -5,19 +5,24 @@ import clsx from "clsx";
 import Image from "next/image";
 import { useConfigContext, useUserContext } from "@/stores";
 import {
+  Autocomplete,
   Avatar,
   Button,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
+  TextField,
 } from "@mui/material";
 import Currency from "@/utils/currency";
 import { observer } from "mobx-react-lite";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthState } from "@/types/ui";
 import { protectedRoutes } from "@/config";
-import { MdLogout } from "react-icons/md";
+import { MdKeyboardArrowDown, MdLogout, MdOutlineSearch } from "react-icons/md";
+import { useQuery } from "@tanstack/react-query";
+import { ApiRoutes, getItemFilters } from "@/apis";
+import { applyQueryParams } from "@/utils/ui";
 
 type LogoProps = {
   onClick?: () => void;
@@ -54,9 +59,12 @@ const PriceMenu: FC = () => {
 
   return (
     <div className={clsx(styles["price-menu"])}>
-      <Button onClick={handleClick} color="inherit">
+      <Button
+        onClick={handleClick}
+        color="inherit"
+        endIcon={<MdKeyboardArrowDown />}
+      >
         {configStore.currency}
-        <span>▼</span>
       </Button>
       <Menu
         id="price-menu"
@@ -95,7 +103,9 @@ const AccountMenu: FC<AccountMenuProps> = () => {
   return (
     <>
       <IconButton onClick={onClick}>
-        <Avatar>{userStore.user?.username[0]}</Avatar>
+        <Avatar className={styles["avatar"]}>
+          {userStore.user?.username[0]}
+        </Avatar>
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -126,6 +136,63 @@ const LoginButton: FC<LoginButtonProps> = ({ onClick }) => {
   );
 };
 
+const ItemSearchBar: FC = () => {
+  const { data, isPending, isError } = useQuery({
+    queryKey: [ApiRoutes.items, "filters"],
+    queryFn: getItemFilters,
+  });
+
+  const names = data?.filters?.name || ["Loading..."];
+  const nameSet = new Set(names);
+
+  const applySearch = (value: string) => {
+    if (value === "") {
+      applyQueryParams({});
+    } else {
+      applyQueryParams({ name: value });
+    }
+  };
+
+  const onChange = (e: React.SyntheticEvent, value: string | null) => {
+    if (value && nameSet.has(value)) {
+      applySearch(value);
+    } else if (value === "" || value === null) {
+      applySearch("");
+    }
+  };
+
+  return (
+    <Autocomplete
+      id="header-item-search"
+      options={names}
+      className={styles["autocomplete"]}
+      popupIcon={
+        <MdOutlineSearch className={styles["autocomplete-search-icon"]} />
+      }
+      sx={{
+        "& .MuiAutocomplete-popupIndicator": {
+          transform: "none",
+          marginLeft: "6px",
+        },
+      }}
+      onChange={onChange}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          className={clsx(styles["autocomplete-input"])}
+          variant="outlined"
+          sx={{
+            "& fieldset": { display: "none" },
+          }}
+          placeholder="Search for items..."
+          InputLabelProps={{ shrink: false }}
+          size="small"
+        />
+      )}
+    />
+  );
+};
+
 const Header: FC = () => {
   const router = useRouter();
   const userStore = useUserContext();
@@ -143,6 +210,7 @@ const Header: FC = () => {
   return (
     <header className={clsx(styles["header"], "row")}>
       <Logo onClick={() => router.push("/")} />
+      <ItemSearchBar />
       <div className={clsx(styles["left-row"], "row center")}>
         <PriceMenu />
         {userStore.loading ? null : renderUserSection()}

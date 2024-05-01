@@ -4,12 +4,14 @@ import {
   CheckAuthDataDTO,
   ItemData,
   ItemDataDTO,
+  ItemFiltersDataDTO,
   ItemsData,
   ItemsDataDTO,
   LoginDataDTO,
   SignUpDataDTO,
 } from "@/types/apis";
 import { UserDTO } from "@/types/dtos";
+import { ItemFiltersData } from "@/types/transformed";
 
 export const ApiRoutes = {
   items: "items",
@@ -39,6 +41,11 @@ export const getBuffIds = async () => {
 export const getUserByToken = async () => {
   const endpoint = `${ApiRoutes.auth}`;
   return fetchData<CheckAuthDataDTO>(endpoint);
+};
+
+export const getItemFilters = async (): Promise<ItemFiltersData> => {
+  const endpoint = `${ApiRoutes.items}/filters`;
+  return fetchData<ItemFiltersDataDTO>(endpoint);
 };
 
 type LoginForm = {

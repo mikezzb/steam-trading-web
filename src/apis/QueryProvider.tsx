@@ -28,6 +28,7 @@ export const QueryProvider: FCC = ({ children }) => {
         defaultOptions: {
           queries: {
             staleTime: ApiConfig.staleTime,
+            gcTime: ApiConfig.gcTime,
           },
         },
         queryCache: new QueryCache({

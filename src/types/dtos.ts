@@ -6,6 +6,10 @@ export interface MarketPriceDTO {
 export interface ItemDTO {
   _id: string;
   name: string;
+  category: string;
+  skin?: string;
+  exterior?: string;
+
   iconUrl: string;
   buffPrice: MarketPriceDTO;
   uuPrice: MarketPriceDTO;

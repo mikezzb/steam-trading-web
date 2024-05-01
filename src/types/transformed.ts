@@ -1,6 +1,15 @@
 // transformed types from DTOs
 
 import Currency from "@/utils/currency";
+import {
+  ItemDTO,
+  ListingDTO,
+  SubscriptionDTO,
+  TransactionDTO,
+  TransactionMetadataDTO,
+  UserDTO,
+} from "./dtos";
+import { ItemFiltersDataDTO } from "./apis";
 
 export type PriceInfo = {
   market: string;
@@ -8,76 +17,21 @@ export type PriceInfo = {
   updatedAt: Date;
 };
 
-export interface Item {
-  _id: string;
-  fullName: string;
-  name: string;
-  exterior: string;
-  skin: string;
-  iconUrl: string;
+export interface Item extends ItemDTO {
   prices: Record<string, PriceInfo>;
-
   lowestPrice?: PriceInfo;
 }
 
-export interface Listing {
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
-  market: string;
-  price: string;
-  previewUrl: string;
-  goodsId: number;
-  classId: string;
-  assetId: string;
-  tradableCooldown: string;
-  paintWear: string;
-  paintIndex: number;
-  paintSeed: number;
-  rarity: string;
-  instanceId: string;
-}
+export interface Listing extends ListingDTO {}
 
-export interface Subscription {
-  _id: string;
-  name: string;
-  rarity?: string;
-  maxPremium?: string;
-  notiType: string;
-  notiId: string;
-  ownerId: string;
-}
+export interface Subscription extends SubscriptionDTO {}
 
-export interface User {
-  _id: string;
-  username: string;
-  password: string;
-  email: string;
-  role: string;
-  subscriptionIds: string[];
-  favItemIds: string[];
-  favListingIds: string[];
-}
+export interface User extends UserDTO {}
 
-export interface TransactionMetadata {
-  market: string;
-  assetId: string;
-}
+export interface TransactionMetadata extends TransactionMetadataDTO {}
 
-export interface Transaction {
-  _id: string;
+export interface Transaction extends TransactionDTO {
   metadata: TransactionMetadata;
-  name: string;
-  createdAt: string;
-  price: string;
-  previewUrl: string;
-  goodsId: number;
-  classId: string;
-  tradableCooldown: string;
-  paintWear: string;
-  paintIndex: number;
-  paintSeed: number;
-  rarity: string;
-  instanceId: string;
 }
+
+export interface ItemFiltersData extends ItemFiltersDataDTO {}

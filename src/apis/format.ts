@@ -33,18 +33,13 @@ const formatItemDTO = (itemDTO: ItemDTO): Item => {
       lowestPrice = prices[market];
     }
   });
-  const { name, exterior, skin } = decodeItemName(itemDTO.name);
 
   const item: Item = {
-    _id: itemDTO._id,
-    fullName: itemDTO.name,
-    name,
-    exterior,
-    skin,
-    iconUrl: itemDTO.iconUrl,
+    ...itemDTO,
     prices,
     lowestPrice,
   };
+  console.log("item", item);
 
   return item;
 };

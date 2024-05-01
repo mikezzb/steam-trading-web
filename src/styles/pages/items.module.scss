@@ -1,21 +1,18 @@
 .home {
   flex: 1;
   width: 100%;
-}
 
-.item-card {
+  padding-right: 0; // let item list handle padding
 }
 
 .item-list {
   display: block; // must be block to work with auto-sizer
   flex: 1 1 auto;
   height: 100%;
+  overflow-y: visible;
 }
 
 .item-row {
   // margin: 0 var(--item-gap) var(--item-gap) var(--item-gap);
   column-gap: var(--item-gap);
-}
-
-.filter-bar {
 }

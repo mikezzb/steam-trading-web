@@ -3,7 +3,8 @@ import { createTheme } from "@mui/material/styles";
 export const ApiConfig = {
   url: "http://localhost:8080/api",
   itemPageSize: 20,
-  staleTime: 1000 * 60 * 1,
+  staleTime: 1000 * 60 * 1, // 1 minute
+  gcTime: 1000 * 60 * 5, // 5 minutes
 };
 
 export const AppConfig = {
@@ -36,13 +37,16 @@ export const CurrencySymbol: Record<string, string> = {
 
 export const ItemGridConfig = {
   itemWidth: 300,
-  itemHeight: 350,
+  itemHeight: 330,
 };
 
 export const UiConfig = {
   sideBarWidth: 292,
   headerHeight: 64,
   itemGap: 10,
+  pagePadding: 40,
 };
 
 export const protectedRoutes = ["/items"];
+
+export const ItemsQueryParams = ["name", "category", "skin", "exterior"];

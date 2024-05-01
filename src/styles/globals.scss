@@ -30,6 +30,8 @@
 
   --border-radius: 8px;
   --item-gap: 10px;
+  --header-height: 64px;
+  --page-padding: 40px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -105,6 +107,13 @@ textarea {
 
 .f1 {
   flex: 1;
+}
+
+.page {
+  display: flex;
+  padding: 0 var(--page-padding);
+
+  margin-top: var(--header-height);
 }
 
 // Remove default styles

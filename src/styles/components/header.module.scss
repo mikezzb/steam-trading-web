@@ -1,16 +1,17 @@
 .header {
-  height: 64px;
+  height: var(--header-height);
   width: 100%;
   padding: 0 16px;
-  position: sticky;
+  position: fixed;
   top: 0;
+  z-index: 1000;
 
   align-items: center;
   justify-content: space-between;
 }
 
 .left-row {
-  column-gap: 16px;
+  column-gap: 10px;
 }
 
 .logo {
@@ -23,7 +24,23 @@
 .price-menu {
   > button {
     span {
-      margin-left: 6px;
+      margin-left: 4px;
     }
+  }
+}
+
+.avatar {
+  text-transform: capitalize;
+}
+
+.autocomplete {
+  width: 380px;
+
+  border: 1px solid var(--gray-800);
+  border-radius: var(--border-radius);
+
+  .MuiAutocomplete-popupIndicator {
+    margin-left: 20px;
+    background-color: aqua;
   }
 }

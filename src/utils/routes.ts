@@ -5,3 +5,7 @@ export const getItemPreviewUrl = (itemId: string) => {
 export const getItemUrl = (itemId: string) => {
   return `/items/${itemId}`;
 };
+
+export const getItemsUrl = (params: URLSearchParams) => {
+  return `/items?${params}`;
+};

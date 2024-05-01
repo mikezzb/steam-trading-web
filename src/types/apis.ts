@@ -45,3 +45,12 @@ export type LoginDataDTO = {
 } & CheckAuthDataDTO;
 
 export type SignUpDataDTO = {} & LoginDataDTO;
+
+export type ItemFiltersDataDTO = {
+  filters: {
+    category: string[];
+    skin: string[];
+    exterior: string[];
+    name: string[];
+  };
+};
