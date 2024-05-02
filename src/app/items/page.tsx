@@ -6,11 +6,13 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Autocomplete,
   Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
   Paper,
+  TextField,
 } from "@mui/material";
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react-lite";
@@ -33,7 +35,7 @@ import { ItemsData } from "@/types/apis";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getItemUrl, getItemsUrl } from "@/utils/routes";
 import { MdExpandMore } from "react-icons/md";
-import { CsExteriors } from "@/constants";
+import { CsExteriors, CsExteriorsFull, ExteriorMap } from "@/constants";
 type ItemRowProps = {
   items: Item[];
   style: any;
@@ -195,29 +197,20 @@ type FilterProp<T = string | null, P = string> = {
   onValueChange: (value: T) => void;
 };
 
-const CategoryFilter: FC<FilterProp> = ({ value, values, onValueChange }) => {
-  return (
-    <Accordion className="accordion" disableGutters>
-      <AccordionSummary expandIcon={<MdExpandMore />} id="category-filter">
-        Category
-      </AccordionSummary>
-      <AccordionDetails>
-        <FormGroup>
-          {values?.map((v) => (
-            <FormControlLabel key={v} control={<Checkbox />} label={v} />
-          ))}
-        </FormGroup>
-      </AccordionDetails>
-    </Accordion>
-  );
-};
+type CheckboxFilterProps = {
+  label: string;
+  labels?: string[]; // label of each value, default to values
+  accordionProps?: any;
+} & FilterProp<string[]>;
 
-const ExteriorFilter: FC<FilterProp<string[] | null>> = ({
-  value,
+const CheckboxFilter: FC<CheckboxFilterProps> = ({
+  label,
   values,
+  accordionProps,
   onValueChange,
+  value = values ?? [],
+  labels = values ?? [],
 }) => {
-  console.log(value);
   const onCheck = (e: React.ChangeEvent<HTMLInputElement>, label: string) => {
     const { checked } = e.target;
     if (checked) {
@@ -228,25 +221,67 @@ const ExteriorFilter: FC<FilterProp<string[] | null>> = ({
   };
 
   return (
-    <Accordion className="accordion" disableGutters>
-      <AccordionSummary expandIcon={<MdExpandMore />} id="category-filter">
-        Exterior
+    <Accordion className="accordion" disableGutters {...accordionProps}>
+      <AccordionSummary expandIcon={<MdExpandMore />} id={`${label}-filter`}>
+        {label}
       </AccordionSummary>
       <AccordionDetails>
         <FormGroup>
-          {CsExteriors.map((v) => (
+          {(values ?? []).map((v, i) => (
             <FormControlLabel
               key={v}
               control={
                 <Checkbox
-                  checked={value?.includes(v) ?? false}
+                  checked={!value || value?.includes(v)}
                   onChange={(e) => onCheck(e, v)}
+                  color="default"
                 />
               }
-              label={v}
+              label={labels[i]}
             />
           ))}
         </FormGroup>
+      </AccordionDetails>
+    </Accordion>
+  );
+};
+
+type AutocompleteFilterProps = {
+  label: string;
+  accordionProps?: any;
+} & FilterProp;
+
+const AutocompleteFilter: FC<AutocompleteFilterProps> = ({
+  label,
+  value,
+  values,
+  onValueChange,
+  accordionProps,
+}) => {
+  return (
+    <Accordion className="accordion" disableGutters {...accordionProps}>
+      <AccordionSummary expandIcon={<MdExpandMore />} id={`${label}-filter`}>
+        {label}
+      </AccordionSummary>
+      <AccordionDetails>
+        <Autocomplete
+          className={clsx(styles["filter-autocomplete"], "autocomplete")}
+          options={values ?? []}
+          value={value}
+          onChange={(e, v) => onValueChange(v)}
+          popupIcon={false}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className="autocomplete-input"
+              variant="outlined"
+              placeholder={`Find ${label}...`}
+              InputLabelProps={{ shrink: false }}
+              size="small"
+              sx={{ width: "100%" }}
+            />
+          )}
+        />
       </AccordionDetails>
     </Accordion>
   );
@@ -277,12 +312,25 @@ const ItemFilterBar: FC<ItemFilterBarProps> = ({ params }) => {
         width: UiConfig.sideBarWidth,
       }}
     >
-      <ExteriorFilter
-        value={searchParams?.get("exterior")?.split(",") ?? []}
-        values={filtersData?.exterior ?? CsExteriors}
+      <CheckboxFilter
+        label="Exterior"
+        value={searchParams?.get("exterior")?.split(",") ?? CsExteriors}
+        labels={CsExteriorsFull}
+        values={CsExteriors}
         onValueChange={(v) => updatePathParams("exterior", v ?? "")}
+        accordionProps={{ defaultExpanded: true }}
       />
-      <CategoryFilter
+
+      <AutocompleteFilter
+        label="Skin"
+        value={searchParams?.get("skin")}
+        values={filtersData?.skin}
+        onValueChange={(v) => updatePathParams("skin", v ?? "")}
+        accordionProps={{ defaultExpanded: true }}
+      />
+
+      <AutocompleteFilter
+        label="Item"
         value={searchParams?.get("category")}
         values={filtersData?.category}
         onValueChange={(v) => updatePathParams("category", v ?? "")}

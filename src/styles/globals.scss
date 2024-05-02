@@ -181,6 +181,7 @@ textarea[type="number"] {
 
 .accordion {
   box-shadow: none !important;
+  cursor: pointer;
 
   &::before {
     display: none;

@@ -26,3 +26,7 @@ export const ExteriorMap = {
   WW: "Well-Worn",
   BS: "Battle-Scarred",
 };
+
+export const CsExteriorsFull: string[] = CsExteriors.map(
+  (exterior) => (ExteriorMap as any)[exterior]
+);

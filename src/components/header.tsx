@@ -174,7 +174,7 @@ const ItemSearchBar: FC = () => {
       renderInput={(params) => (
         <TextField
           {...params}
-          className={"autocomplete-input"}
+          className="autocomplete-input"
           variant="outlined"
           placeholder="Search for items..."
           InputLabelProps={{ shrink: false }}
