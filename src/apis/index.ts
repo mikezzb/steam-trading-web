@@ -1,4 +1,4 @@
-import { fetchData } from "./utils";
+import { fetchData, removeEmptyParams, removeEmptyValues } from "./utils";
 import { formatItemData, formatItemsData } from "./format";
 import {
   CheckAuthDataDTO,
@@ -26,6 +26,8 @@ export const getItem = async (itemId: string) => {
 };
 
 export const getItems = async (params: Record<string, any>) => {
+  // Remove empty values from params
+  removeEmptyValues(params);
   const searchParams = new URLSearchParams(params);
   const endpoint = `${ApiRoutes.items}?${searchParams}`;
   const data = await fetchData<ItemsDataDTO>(endpoint);

@@ -1,11 +1,21 @@
 import { createTheme } from "@mui/material/styles";
 
-export const ApiConfig = {
+const ApiProdConfig = {
   url: "http://localhost:8080/api",
   itemPageSize: 20,
   staleTime: 1000 * 60 * 1, // 1 minute
   gcTime: 1000 * 60 * 5, // 5 minutes
 };
+
+const ApiTestConfig = {
+  url: "http://localhost:8080/api",
+  itemPageSize: 20,
+  staleTime: 1000 * 1,
+  gcTime: 1000 * 1,
+};
+
+export const ApiConfig =
+  process.env.NODE_ENV === "production" ? ApiProdConfig : ApiTestConfig;
 
 export const AppConfig = {
   url: "http://localhost:3000",
@@ -44,7 +54,7 @@ export const ItemGridConfig = {
 export const UiConfig = {
   sideBarWidth: 292,
   headerHeight: 64,
-  itemGap: 10,
+  itemGap: 2,
   pagePadding: 40,
 };
 

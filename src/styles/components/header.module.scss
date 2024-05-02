@@ -32,15 +32,3 @@
 .avatar {
   text-transform: capitalize;
 }
-
-.autocomplete {
-  width: 380px;
-
-  border: 1px solid var(--gray-800);
-  border-radius: var(--border-radius);
-
-  .MuiAutocomplete-popupIndicator {
-    margin-left: 20px;
-    background-color: aqua;
-  }
-}

@@ -29,7 +29,7 @@
   --text: var(--gray-50);
 
   --border-radius: 8px;
-  --item-gap: 10px;
+  --item-gap: 2px;
   --header-height: 64px;
   --page-padding: 40px;
 }
@@ -159,4 +159,30 @@ textarea[type="number"] {
   display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+.autocomplete {
+  width: 380px;
+
+  border: 1px solid var(--gray-800);
+  border-radius: var(--border-radius);
+
+  .MuiAutocomplete-popupIndicator {
+    transform: none;
+    margin-left: 6px;
+  }
+}
+
+.autocomplete-input {
+  fieldset {
+    display: none !important;
+  }
+}
+
+.accordion {
+  box-shadow: none !important;
+
+  &::before {
+    display: none;
+  }
 }

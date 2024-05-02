@@ -67,3 +67,25 @@ export const getNextPageParam = (
   const nextPage = page < totalPages ? page + 1 : undefined;
   return nextPage;
 };
+
+export const removeEmptyParams = (params: URLSearchParams) => {
+  params.forEach((value, key) => {
+    console.log(
+      `check empty param: ${key}, ${value} | ${value === ""} | ${
+        value === null
+      }`
+    );
+    if (value === "" || value === null) {
+      console.log(`remove empty param: ${key}`);
+      params.delete(key);
+    }
+  });
+};
+
+export const removeEmptyValues = (obj: Record<string, any>) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    }
+  });
+};

@@ -3,6 +3,7 @@
   width: 100%;
 
   padding-right: 0; // let item list handle padding
+  column-gap: var(--item-gap);
 }
 
 .item-list {
@@ -15,4 +16,8 @@
 .item-row {
   // margin: 0 var(--item-gap) var(--item-gap) var(--item-gap);
   column-gap: var(--item-gap);
+}
+
+.filter-bar {
+  padding: 16px;
 }

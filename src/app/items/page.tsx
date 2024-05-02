@@ -7,9 +7,12 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
   Paper,
 } from "@mui/material";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { ApiRoutes, getItemFilters, getItems } from "@/apis";
@@ -30,6 +33,7 @@ import { ItemsData } from "@/types/apis";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getItemUrl, getItemsUrl } from "@/utils/routes";
 import { MdExpandMore } from "react-icons/md";
+import { CsExteriors } from "@/constants";
 type ItemRowProps = {
   items: Item[];
   style: any;
@@ -65,8 +69,16 @@ type ItemListProps = {
   params?: URLSearchParams;
 };
 
-const ItemList: FC<ItemListProps> = ({ params }) => {
+const ItemList: FC<ItemListProps> = ({}) => {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const validParams = getValidParams(searchParams, ItemsQueryParams);
+
+  // search params
+  const category = validParams.get("category");
+  const exterior = validParams.get("exterior");
+  const skin = validParams.get("skin");
 
   const {
     isPending,
@@ -76,12 +88,18 @@ const ItemList: FC<ItemListProps> = ({ params }) => {
     data,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteQuery<ItemsData, Error>({
-    queryKey: [ApiRoutes.items, params],
-    queryFn: ({ pageParam }) => getItems({ page: pageParam, ...params }),
+    queryKey: [ApiRoutes.items, category, exterior, skin],
+    queryFn: ({ pageParam }) =>
+      getItems({ page: pageParam, category, exterior, skin }),
     getNextPageParam: getNextPageParam,
     initialPageParam: 1,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [category, exterior, skin, refetch]);
 
   const { width, height } = useWindowDimensions();
 
@@ -171,18 +189,65 @@ type ItemFilterBarProps = {
   params?: URLSearchParams;
 };
 
-type FilterProp<T = string | null> = {
+type FilterProp<T = string | null, P = string> = {
   value?: T;
-  onValueChange: (value: string) => void;
+  values?: P[];
+  onValueChange: (value: T) => void;
 };
 
-const CategoryFilter: FC<FilterProp> = ({ value, onValueChange }) => {
+const CategoryFilter: FC<FilterProp> = ({ value, values, onValueChange }) => {
   return (
-    <Accordion>
+    <Accordion className="accordion" disableGutters>
       <AccordionSummary expandIcon={<MdExpandMore />} id="category-filter">
         Category
       </AccordionSummary>
-      <AccordionDetails>EXPANDED</AccordionDetails>
+      <AccordionDetails>
+        <FormGroup>
+          {values?.map((v) => (
+            <FormControlLabel key={v} control={<Checkbox />} label={v} />
+          ))}
+        </FormGroup>
+      </AccordionDetails>
+    </Accordion>
+  );
+};
+
+const ExteriorFilter: FC<FilterProp<string[] | null>> = ({
+  value,
+  values,
+  onValueChange,
+}) => {
+  console.log(value);
+  const onCheck = (e: React.ChangeEvent<HTMLInputElement>, label: string) => {
+    const { checked } = e.target;
+    if (checked) {
+      onValueChange([...(value ?? []), label]);
+    } else {
+      onValueChange((value ?? []).filter((a) => a !== label));
+    }
+  };
+
+  return (
+    <Accordion className="accordion" disableGutters>
+      <AccordionSummary expandIcon={<MdExpandMore />} id="category-filter">
+        Exterior
+      </AccordionSummary>
+      <AccordionDetails>
+        <FormGroup>
+          {CsExteriors.map((v) => (
+            <FormControlLabel
+              key={v}
+              control={
+                <Checkbox
+                  checked={value?.includes(v) ?? false}
+                  onChange={(e) => onCheck(e, v)}
+                />
+              }
+              label={v}
+            />
+          ))}
+        </FormGroup>
+      </AccordionDetails>
     </Accordion>
   );
 };
@@ -195,39 +260,43 @@ const ItemFilterBar: FC<ItemFilterBarProps> = ({ params }) => {
     queryFn: getItemFilters,
   });
 
-  const updatePathParams = (key: string, value: string) => {
+  const updatePathParams = (key: string, value: any) => {
     const updatedParams = new URLSearchParams(searchParams);
     updatedParams.set(key, value);
     window.history.pushState(null, "", `?${updatedParams.toString()}`);
   };
 
-  const filtersData = data?.filters || {};
+  const filtersData = data?.filters;
+
+  const onExteriorChange = (value: string) => {};
 
   return (
-    <div
-      className={clsx(styles["filter-bar"], "column center")}
+    <Paper
+      className={clsx(styles["filter-bar"], "column")}
       style={{
         width: UiConfig.sideBarWidth,
       }}
     >
-      Filter Bar
-      {JSON.stringify(params)}
-      <CategoryFilter
-        value={params?.get("category")}
-        onValueChange={(v) => updatePathParams("category", v)}
+      <ExteriorFilter
+        value={searchParams?.get("exterior")?.split(",") ?? []}
+        values={filtersData?.exterior ?? CsExteriors}
+        onValueChange={(v) => updatePathParams("exterior", v ?? "")}
       />
-    </div>
+      <CategoryFilter
+        value={searchParams?.get("category")}
+        values={filtersData?.category}
+        onValueChange={(v) => updatePathParams("category", v ?? "")}
+      />
+    </Paper>
   );
 };
 
 const ItemsPage: FC = () => {
   const uiStore = useUIContext();
-  const searchParams = useSearchParams();
-  const validParams = getValidParams(searchParams, ItemsQueryParams);
   return (
     <main className={clsx(styles["home"], "row page")}>
       <ItemFilterBar />
-      <ItemList params={validParams} />
+      <ItemList />
     </main>
   );
 };

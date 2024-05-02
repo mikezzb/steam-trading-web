@@ -168,25 +168,14 @@ const ItemSearchBar: FC = () => {
     <Autocomplete
       id="header-item-search"
       options={names}
-      className={styles["autocomplete"]}
-      popupIcon={
-        <MdOutlineSearch className={styles["autocomplete-search-icon"]} />
-      }
-      sx={{
-        "& .MuiAutocomplete-popupIndicator": {
-          transform: "none",
-          marginLeft: "6px",
-        },
-      }}
+      className="autocomplete"
+      popupIcon={<MdOutlineSearch />}
       onChange={onChange}
       renderInput={(params) => (
         <TextField
           {...params}
-          className={clsx(styles["autocomplete-input"])}
+          className={"autocomplete-input"}
           variant="outlined"
-          sx={{
-            "& fieldset": { display: "none" },
-          }}
           placeholder="Search for items..."
           InputLabelProps={{ shrink: false }}
           size="small"
