@@ -19,3 +19,7 @@ export const decodeItemName = (itemFullName: string): CS2Item => {
 export const getBuffUrl = (itemId: string) => {
   return `https://buff.163.com/goods/${itemId}?appid=730`;
 };
+
+export const getSteamMarketUrl = (itemName: string, gameId = "730") => {
+  return `https://steamcommunity.com/market/listings/${gameId}/${itemName}`;
+};
