@@ -44,6 +44,14 @@ export type TransactionDaysData = {
   transactions: Transaction[];
 };
 
+export type TransactionPageDataDTO = {
+  transactions: TransactionDTO[];
+};
+
+export type TransactionPageData = {
+  transactions: Transaction[];
+};
+
 export type CheckAuthDataDTO = {
   user: UserDTO;
 };

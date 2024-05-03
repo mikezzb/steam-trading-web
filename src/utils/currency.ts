@@ -46,6 +46,7 @@ class Currency {
     this.value =
       (this.value / Currency.rates[this.currency]) * Currency.rates[target];
     this.currency = target;
+    return this;
   }
 
   private _checkAndConvert() {

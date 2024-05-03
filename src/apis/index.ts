@@ -9,6 +9,9 @@ import {
   ItemsDataDTO,
   LoginDataDTO,
   SignUpDataDTO,
+  TransactionDaysData,
+  TransactionDaysDataDTO,
+  TransactionPageData,
 } from "@/types/apis";
 import { UserDTO } from "@/types/dtos";
 import { ItemFiltersData } from "@/types/transformed";
@@ -85,7 +88,15 @@ export const signup = async (body: SignUpForm) => {
 export const getItemTransactionsByDays = async (
   item: string,
   numDays: number
-) => {
+): Promise<TransactionDaysData> => {
   const endpoint = `${ApiRoutes.transactions}?days=${numDays}&name=${item}`;
-  return fetchData<ItemData[]>(endpoint);
+  return fetchData<TransactionDaysDataDTO>(endpoint);
+};
+
+export const getItemTransactionsByPage = async (
+  item: string,
+  page: number
+): Promise<TransactionPageData> => {
+  const endpoint = `${ApiRoutes.transactions}?page=${page}&name=${item}`;
+  return fetchData<TransactionDaysDataDTO>(endpoint);
 };

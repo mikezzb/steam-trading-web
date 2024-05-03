@@ -13,13 +13,15 @@ import { FC, useState } from "react";
 import styles from "@/styles/components/item.module.scss";
 import Image from "next/image";
 import Currency from "@/utils/currency";
-import { Item } from "@/types/transformed";
+import { Item, Transaction } from "@/types/transformed";
 import { getItemPreviewUrl } from "@/utils/routes";
 import { MdOpenInNew, MdOutlineArrowOutward } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { ApiRoutes, getItemTransactionsByDays } from "@/apis";
 import NextLink from "next/link";
 import { MarketNames } from "@/constants";
+import { LineChart } from "@mui/x-charts";
+import { TransactionConfig } from "@/config";
 
 type ItemCardProps = {
   item: Item;
@@ -61,23 +63,107 @@ type ItemBannerProps = {
   item: Item;
 };
 
+const getLegandsFromDays = (days: number, numLegends: number) => {
+  const legandDuration = days / numLegends;
+  const legands: string[] = [];
+  for (let i = 0; i < numLegends; i++) {
+    // get the date before the current date
+    const date = new Date();
+    date.setDate(date.getDate() - i * legandDuration);
+  }
+
+  return legands;
+};
+
 type ItemTransactionCardProps = {
   name: string;
+};
+
+type MedianPrice = {
+  x: Date;
+  y: number;
+};
+
+const getTransactionStats = (
+  transactions: Transaction[]
+): { x: Date[]; y: number[] } => {
+  const dailyPrices: Record<string, number[]> = {};
+  for (const transaction of transactions) {
+    const date = new Date(transaction.createdAt);
+    // get the day with YYYY-MM-DD format
+    const day = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    if (!dailyPrices[day]) {
+      dailyPrices[day] = [];
+    }
+    dailyPrices[day].push(+transaction.price);
+  }
+  const dailyMedians: Record<string, number> = {};
+  for (const day in dailyPrices) {
+    const prices = dailyPrices[day];
+    prices.sort((a, b) => a - b);
+    const median = prices[Math.floor(prices.length / 2)];
+    dailyMedians[day] = median;
+  }
+
+  const medianPrices: MedianPrice[] = Object.keys(dailyMedians).map(
+    (day, i) => {
+      // extract year, month, day from the date string
+      const [year, month, date] = day.split("-");
+      return {
+        x: new Date(+year, +month, +date),
+        y: new Currency(dailyMedians[day]).to().value,
+      };
+    }
+  );
+
+  // sort the median prices by date
+  medianPrices.sort((a, b) => a.x.getTime() - b.x.getTime());
+
+  const timeData = medianPrices.map((price) => price.x);
+  const priceData = medianPrices.map((price) => price.y);
+
+  return { x: timeData, y: priceData };
+};
+
+type SalesChartProps = {
+  x: Date[];
+  y: number[];
+  dataDays: number;
+};
+const SalesChart: FC<SalesChartProps> = ({ x, y, dataDays }) => {
+  return (
+    <LineChart
+      xAxis={[
+        {
+          tickMinStep: (3600 * 1000 * 24 * dataDays) / 8,
+          data: x,
+          scaleType: "time",
+        },
+      ]}
+      series={[
+        {
+          type: "line",
+          data: y,
+        },
+      ]}
+      height={380}
+    />
+  );
 };
 
 export const ItemTransactionStats: FC<ItemTransactionCardProps> = ({
   name,
 }) => {
-  const [days, setDays] = useState(30);
+  const [days, setDays] = useState(TransactionConfig.statDays);
   // get item transaction history
   const { data, isPending, isError } = useQuery({
     queryKey: [ApiRoutes.transactions, name, days],
     queryFn: () => getItemTransactionsByDays(name, days),
   });
 
-  return (
-    <Paper className={clsx(styles["item-transaction-card"], "column")}></Paper>
-  );
+  const { x, y } = getTransactionStats(data?.transactions || []);
+
+  return <SalesChart x={x} y={y} dataDays={days} />;
 };
 
 enum TransactionTab {
