@@ -30,3 +30,7 @@ export const ExteriorMap = {
 export const CsExteriorsFull: string[] = CsExteriors.map(
   (exterior) => (ExteriorMap as any)[exterior]
 );
+
+export const MarketNames = {
+  CS: "Counter-Strike 2",
+};

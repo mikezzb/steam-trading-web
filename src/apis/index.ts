@@ -17,6 +17,8 @@ export const ApiRoutes = {
   items: "items",
   auth: "auth",
   users: "users",
+  transactions: "transactions",
+  listings: "listings",
 };
 
 export const getItem = async (itemId: string) => {
@@ -78,4 +80,12 @@ export const signup = async (body: SignUpForm) => {
     { body, method: "POST" },
     "no-cache"
   );
+};
+
+export const getItemTransactionsByDays = async (
+  item: string,
+  numDays: number
+) => {
+  const endpoint = `${ApiRoutes.transactions}?days=${numDays}&name=${item}`;
+  return fetchData<ItemData[]>(endpoint);
 };

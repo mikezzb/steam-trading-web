@@ -39,6 +39,8 @@
 .item-banner-left {
   flex: 6;
   height: fit-content;
+
+  row-gap: var(--item-gap);
 }
 
 .item-banner-right {
@@ -70,6 +72,8 @@
   position: relative;
   width: 200px;
   height: 200px;
+
+  margin: 0 auto;
 }
 
 .item-actions {
@@ -95,5 +99,9 @@
 
 .sub-btn {
   max-width: 500px;
-  height: 60px;
+  height: 54px;
+}
+
+.item-breadcrumb {
+  margin-left: 0;
 }

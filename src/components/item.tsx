@@ -1,13 +1,25 @@
 import { decodeItemName, getBuffUrl, getSteamMarketUrl } from "@/utils/cs";
-import { Button, Link, Paper } from "@mui/material";
+import {
+  Breadcrumbs,
+  Button,
+  Link,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import clsx from "clsx";
-import { FC } from "react";
+import { FC, useState } from "react";
 import styles from "@/styles/components/item.module.scss";
 import Image from "next/image";
 import Currency from "@/utils/currency";
 import { Item } from "@/types/transformed";
 import { getItemPreviewUrl } from "@/utils/routes";
 import { MdOpenInNew, MdOutlineArrowOutward } from "react-icons/md";
+import { useQuery } from "@tanstack/react-query";
+import { ApiRoutes, getItemTransactionsByDays } from "@/apis";
+import NextLink from "next/link";
+import { MarketNames } from "@/constants";
 
 type ItemCardProps = {
   item: Item;
@@ -49,11 +61,84 @@ type ItemBannerProps = {
   item: Item;
 };
 
+type ItemTransactionCardProps = {
+  name: string;
+};
+
+export const ItemTransactionStats: FC<ItemTransactionCardProps> = ({
+  name,
+}) => {
+  const [days, setDays] = useState(30);
+  // get item transaction history
+  const { data, isPending, isError } = useQuery({
+    queryKey: [ApiRoutes.transactions, name, days],
+    queryFn: () => getItemTransactionsByDays(name, days),
+  });
+
+  return (
+    <Paper className={clsx(styles["item-transaction-card"], "column")}></Paper>
+  );
+};
+
+enum TransactionTab {
+  STATS = "Sales Chart",
+  RECENT = "Recent Sales",
+}
+
+export const ItemTransactionCard: FC<ItemTransactionCardProps> = ({ name }) => {
+  const [tabValue, setTabValue] = useState(TransactionTab.STATS);
+  return (
+    <Paper className={clsx(styles["item-transaction-card"], "column")}>
+      <Tabs
+        className="tran-tabs"
+        value={tabValue}
+        onChange={(e, value) => setTabValue(value)}
+      >
+        {Object.values(TransactionTab).map((tab) => (
+          <Tab key={tab} label={tab} value={tab} />
+        ))}
+      </Tabs>
+      {tabValue === TransactionTab.STATS && (
+        <ItemTransactionStats name={name} />
+      )}
+      {tabValue === TransactionTab.RECENT && <div>Recent Sales</div>}
+    </Paper>
+  );
+};
+
+type PropsWithItem = {
+  item: Item;
+};
+
+const ItemBreadcrumb: FC<PropsWithItem> = ({ item }) => {
+  return (
+    <Breadcrumbs className={styles["item-breadcrumb"]} aria-label="breadcrumb">
+      <Link
+        underline="hover"
+        color="inherit"
+        href="/items"
+        component={NextLink}
+      >
+        {MarketNames.CS}
+      </Link>
+      <Link
+        underline="hover"
+        color="inherit"
+        href={`/items?category=${item.category}`}
+      >
+        {item.category}
+      </Link>
+      <Typography color="text.primary">{item.skin}</Typography>
+    </Breadcrumbs>
+  );
+};
+
 export const ItemBanner: FC<ItemBannerProps> = ({ item }) => {
   return (
     <div className={clsx(styles["item-banner"], "row")}>
-      <Paper className={clsx(styles["item-banner-left"], "column")}>
-        <div className={clsx(styles["preview-wrapper"], "column center")}>
+      <div className={clsx(styles["item-banner-left"], "column")}>
+        <Paper className={clsx(styles["preview-wrapper"], "column")}>
+          <ItemBreadcrumb item={item} />
           <div className={clsx(styles["image-container"])}>
             <Image src={getItemPreviewUrl(item._id)} alt={item.name} fill />
           </div>
@@ -63,7 +148,7 @@ export const ItemBanner: FC<ItemBannerProps> = ({ item }) => {
               href={getBuffUrl(item._id)}
               target="_blank"
               color={"inherit"}
-              underline="none"
+              underline="hover"
             >
               View at Buff <MdOutlineArrowOutward />
             </Link>
@@ -72,7 +157,7 @@ export const ItemBanner: FC<ItemBannerProps> = ({ item }) => {
               href={getSteamMarketUrl(item.name)}
               target="_blank"
               color={"inherit"}
-              underline="none"
+              underline="hover"
             >
               Check on Steam Market <MdOutlineArrowOutward />
             </Link>
@@ -81,13 +166,14 @@ export const ItemBanner: FC<ItemBannerProps> = ({ item }) => {
               href={getItemPreviewUrl(item._id)}
               target="_blank"
               color={"inherit"}
-              underline="none"
+              underline="hover"
             >
               Screenshot <MdOutlineArrowOutward />
             </Link>
           </div>
-        </div>
-      </Paper>
+        </Paper>
+        <ItemTransactionCard name={item.name} />
+      </div>
       <Paper className={clsx(styles["item-banner-right"], "column")}>
         <div className={styles["item-category"]}>{item.category}</div>
         <div className={styles["item-skin"]}>{item.skin}</div>

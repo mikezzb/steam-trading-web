@@ -1,13 +1,16 @@
 .header {
   height: var(--header-height);
-  width: 100%;
-  padding: 0 16px;
+  margin: 0 var(--page-padding);
+  width: calc(100% - 2 * var(--page-padding));
   position: fixed;
   top: 0;
   z-index: 1000;
 
   align-items: center;
   justify-content: space-between;
+
+  // height: calc(var(--header-height) - var(--item-gap));
+  // background-color: #161616;
 }
 
 .left-row {

@@ -61,3 +61,7 @@ export const UiConfig = {
 export const protectedRoutes = ["/items"];
 
 export const ItemsQueryParams = ["name", "category", "skin", "exterior"];
+
+export const TransactionQueryDays = [7, 30, 60, 90];
+
+export const TransactionQueryDaysLabel = ["1W", "1M", "2M", "3M"];
