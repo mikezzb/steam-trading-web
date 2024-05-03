@@ -49,3 +49,10 @@ export const applyQueryParams = (
   }
   window.history.pushState(null, "", `${baseUrl}?${params}`);
 };
+
+export const formatWear = (wear: string) => {
+  if (+wear >= +PRICE_MAX) {
+    return "1.0000000000";
+  }
+  return wear.substring(0, 12);
+};

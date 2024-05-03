@@ -39,7 +39,6 @@ const formatItemDTO = (itemDTO: ItemDTO): Item => {
     prices,
     lowestPrice,
   };
-  console.log("item", item);
 
   return item;
 };

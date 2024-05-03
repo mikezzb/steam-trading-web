@@ -31,6 +31,10 @@ class Currency {
     return Object.keys(Currency.rates);
   }
 
+  public static get targetSymbol() {
+    return CurrencySymbol[Currency.targetCurrency];
+  }
+
   public static setRates(rates: ExchangeRate) {
     this.rates = rates;
   }

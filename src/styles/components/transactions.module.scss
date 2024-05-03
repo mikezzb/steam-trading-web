@@ -1,0 +1,21 @@
+.item-transaction-card {
+  padding: 24px;
+}
+
+.tran-days-tabs {
+  margin-left: auto;
+  margin-right: 28px;
+
+  column-gap: 8px;
+}
+
+.tran-days-tab {
+  cursor: pointer;
+  letter-spacing: 1px;
+
+  &.active {
+    color: var(--primary);
+    border-bottom: 1px solid var(--primary);
+    padding-bottom: 2px;
+  }
+}
