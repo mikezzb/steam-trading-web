@@ -1,15 +1,21 @@
 import { createTheme } from "@mui/material/styles";
 
-const ApiProdConfig = {
-  url: "http://localhost:8080/api",
+const ApiConfigCommon = {
   itemPageSize: 20,
+  listingPageSize: 10,
+  transactionPageSize: 10,
+};
+
+const ApiProdConfig = {
+  ...ApiConfigCommon,
+  url: "http://localhost:8080/api",
   staleTime: 1000 * 60 * 1, // 1 minute
   gcTime: 1000 * 60 * 5, // 5 minutes
 };
 
 const ApiTestConfig = {
+  ...ApiConfigCommon,
   url: "http://localhost:8080/api",
-  itemPageSize: 20,
   staleTime: 1000 * 1,
   gcTime: 1000 * 1,
 };

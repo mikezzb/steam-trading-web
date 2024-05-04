@@ -1,4 +1,7 @@
 import {
+  Avatar,
+  Button,
+  IconButton,
   Paper,
   Tab,
   Table,
@@ -6,6 +9,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Tabs,
 } from "@mui/material";
@@ -17,20 +21,24 @@ import { Item, Transaction } from "@/types/transformed";
 import { useQuery } from "@tanstack/react-query";
 import {
   ApiRoutes,
+  getItemListingsByPage,
   getItemTransactionsByDays,
   getItemTransactionsByPage,
 } from "@/apis";
 import { LineChart, chartsGridClasses } from "@mui/x-charts";
 import {
+  ApiConfig,
   TransactionConfig,
   TransactionQueryDays,
   TransactionQueryDaysLabel,
 } from "@/config";
-import { formatWear } from "@/utils/ui";
-
-type ItemTransactionCardProps = {
-  name: string;
-};
+import { formatWear, openLink } from "@/utils/ui";
+import { getItemPreviewUrl } from "@/utils/routes";
+import { getItemId } from "@/utils/data";
+import { PropsWithItem } from "@/types/ui";
+import Image from "next/image";
+import { MdOpenInNew } from "react-icons/md";
+import { getListingUrl } from "@/utils/cs";
 
 type MedianPrice = {
   x: Date;
@@ -136,7 +144,7 @@ const SalesChart: FC<SalesChartProps> = ({ x, y, dataDays }) => {
   );
 };
 
-const ItemTransactionStats: FC<ItemTransactionCardProps> = ({ name }) => {
+const ItemTransactionStats: FC<PropsWithItem> = ({ item: { name } }) => {
   const [days, setDays] = useState(TransactionConfig.statDays);
   // get item transaction history
   const { data, isPending, isError } = useQuery({
@@ -167,21 +175,99 @@ const ItemTransactionStats: FC<ItemTransactionCardProps> = ({ name }) => {
   );
 };
 
-const ItemTransactionRecent: FC<ItemTransactionCardProps> = ({ name }) => {
+export const ItemListingsCard: FC<PropsWithItem> = ({ item }) => {
   const { data, isPending, isError } = useQuery({
-    queryKey: [ApiRoutes.transactions, name, 1],
-    queryFn: () => getItemTransactionsByPage(name, 1),
+    queryKey: [ApiRoutes.listings, item.name, 1],
+    queryFn: () => getItemListingsByPage(item.name, 1),
+  });
+
+  return (
+    <Paper className={clsx(styles["item-listings-card"], "column")}>
+      <TableContainer>
+        <Table
+          // hide the borders
+          sx={{
+            "td, th": {
+              border: "none",
+            },
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>Wear</TableCell>
+              <TableCell>Paintseed</TableCell>
+              <TableCell>Market</TableCell>
+              <TableCell>Price</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.listings.map((listing) => (
+              <TableRow key={listing._id}>
+                <TableCell
+                  className={clsx(styles["icon-cell"])}
+                  component="th"
+                  scope="row"
+                >
+                  <div
+                    className={clsx(
+                      styles["item-icon-preview"],
+                      "image-container"
+                    )}
+                  >
+                    <Image
+                      src={getItemPreviewUrl(item._id)}
+                      alt={listing.name}
+                      width={36}
+                      height={36}
+                    />
+                  </div>
+                </TableCell>
+                <TableCell>{formatWear(listing.paintWear)}</TableCell>
+                <TableCell>{listing.paintSeed}</TableCell>
+                <TableCell>{listing.market}</TableCell>
+                <TableCell>{new Currency(listing.price).toString()}</TableCell>
+                <TableCell className={clsx(styles["btn-cell"])}>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => openLink(getListingUrl(listing))}
+                  >
+                    <MdOpenInNew />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[]}
+        component="div"
+        count={data?.total || 0}
+        rowsPerPage={ApiConfig.listingPageSize}
+        page={0}
+        onPageChange={() => {}}
+      />
+    </Paper>
+  );
+};
+
+const ItemTransactionRecent: FC<PropsWithItem> = ({ item }) => {
+  const { data, isPending, isError } = useQuery({
+    queryKey: [ApiRoutes.transactions, item.name, 1],
+    queryFn: () => getItemTransactionsByPage(item.name, 1),
   });
 
   return (
     <TableContainer>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell></TableCell>
             <TableCell align="right">Price</TableCell>
             <TableCell align="right">Wear</TableCell>
-            <TableCell align="right">Paint Seed</TableCell>
+            <TableCell align="right">Paintseed</TableCell>
             <TableCell align="right">Market</TableCell>
             <TableCell align="right">Time</TableCell>
           </TableRow>
@@ -190,7 +276,19 @@ const ItemTransactionRecent: FC<ItemTransactionCardProps> = ({ name }) => {
           {data?.transactions.map((transaction) => (
             <TableRow key={transaction._id}>
               <TableCell component="th" scope="row">
-                {transaction.name}
+                <div
+                  className={clsx(
+                    styles["item-icon-preview"],
+                    "image-container"
+                  )}
+                >
+                  <Image
+                    src={getItemPreviewUrl(item._id)}
+                    alt={transaction.name}
+                    width={40}
+                    height={40}
+                  />
+                </div>
               </TableCell>
               <TableCell align="right">
                 {new Currency(transaction.price).toString()}
@@ -217,7 +315,7 @@ enum TransactionTab {
   RECENT = "Recent Sales",
 }
 
-export const ItemTransactionCard: FC<ItemTransactionCardProps> = ({ name }) => {
+export const ItemTransactionCard: FC<PropsWithItem> = ({ item }) => {
   const [tabValue, setTabValue] = useState(TransactionTab.STATS);
   return (
     <Paper className={clsx(styles["item-transaction-card"], "column")}>
@@ -231,10 +329,10 @@ export const ItemTransactionCard: FC<ItemTransactionCardProps> = ({ name }) => {
         ))}
       </Tabs>
       {tabValue === TransactionTab.STATS && (
-        <ItemTransactionStats name={name} />
+        <ItemTransactionStats item={item} />
       )}
       {tabValue === TransactionTab.RECENT && (
-        <ItemTransactionRecent name={name} />
+        <ItemTransactionRecent item={item} />
       )}
     </Paper>
   );

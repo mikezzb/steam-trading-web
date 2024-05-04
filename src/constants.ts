@@ -12,6 +12,7 @@ export const ErrorCode = {
   ERROR_AUTH_CHECK_ROLE_FAIL: 10006,
 };
 
+export const CS_APPID = "730";
 export const MarketKeys = ["igxe", "buff", "uu", "steam"];
 
 export const BIG_DECIMAL_NULL = "0E-6176";
@@ -34,3 +35,5 @@ export const CsExteriorsFull: string[] = CsExteriors.map(
 export const MarketNames = {
   CS: "Counter-Strike 2",
 };
+
+export const BUFF_ITEM_PREVIEW_BASE_URL = "https://buff.163.com/goods";

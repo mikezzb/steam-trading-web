@@ -34,10 +34,12 @@
 .item-banner {
   height: fit-content;
   column-gap: var(--item-gap);
+
+  --banner-padding: 26px;
 }
 
 .item-banner-left {
-  flex: 6;
+  flex: 1;
   height: fit-content;
 
   row-gap: var(--item-gap);
@@ -46,9 +48,8 @@
 .item-banner-right {
   display: flex;
   flex-direction: column;
-  row-gap: 8px;
-  padding: 32px;
-  flex: 4;
+  row-gap: var(--item-gap);
+  flex: 1;
 
   .item-category {
     font-size: 18px;
@@ -68,6 +69,13 @@
   }
 }
 
+.item-banner-card {
+  padding: var(--banner-padding);
+  height: 350px;
+
+  row-gap: 8px;
+}
+
 .image-container {
   position: relative;
   width: 240px;
@@ -77,12 +85,12 @@
 }
 
 .item-actions {
-  margin-top: 24px;
+  margin-top: auto;
 }
 
 .preview-wrapper {
-  height: fit-content;
-  padding: 24px;
+  height: 350px;
+  padding: var(--banner-padding);
 }
 
 .preview-actions {

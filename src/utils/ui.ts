@@ -56,3 +56,7 @@ export const formatWear = (wear: string) => {
   }
   return wear.substring(0, 12);
 };
+
+export const openLink = (url: string) => {
+  window.open(url, "_blank");
+};

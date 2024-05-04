@@ -9,7 +9,7 @@ import { getItemPreviewUrl } from "@/utils/routes";
 import { MdOutlineArrowOutward } from "react-icons/md";
 import NextLink from "next/link";
 import { MarketNames } from "@/constants";
-import { ItemTransactionCard } from "./transactions";
+import { ItemListingsCard, ItemTransactionCard } from "./transactions";
 import { PropsWithItem } from "@/types/ui";
 
 type ItemCardProps = {
@@ -110,23 +110,26 @@ export const ItemBanner: FC<PropsWithItem> = ({ item }) => {
             </Link>
           </div>
         </Paper>
-        <ItemTransactionCard name={item.name} />
+        <ItemTransactionCard item={item} />
       </div>
-      <Paper className={clsx(styles["item-banner-right"], "column")}>
-        <div className={styles["item-category"]}>{item.category}</div>
-        <div className={styles["item-skin"]}>{item.skin}</div>
-        <div className={styles["item-exterior"]}>{item.exterior}</div>
+      <div className={clsx(styles["item-banner-right"], "column")}>
+        <Paper className={clsx(styles["item-banner-card"], "column")}>
+          <div className={styles["item-category"]}>{item.category}</div>
+          <div className={styles["item-skin"]}>{item.skin}</div>
+          <div className={styles["item-exterior"]}>{item.exterior}</div>
 
-        <div className={styles["item-price"]}>
-          {item.lowestPrice?.price?.toString() || "No Listing"}
-        </div>
+          <div className={styles["item-price"]}>
+            {item.lowestPrice?.price?.toString() || "No Listing"}
+          </div>
 
-        <div className={clsx(styles["item-actions"], "column")}>
-          <Button className={styles["sub-btn"]} variant="contained">
-            Subscribe
-          </Button>
-        </div>
-      </Paper>
+          <div className={clsx(styles["item-actions"], "column")}>
+            <Button className={styles["sub-btn"]} variant="contained">
+              Subscribe
+            </Button>
+          </div>
+        </Paper>
+        <ItemListingsCard item={item} />
+      </div>
     </div>
   );
 };

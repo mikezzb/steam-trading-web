@@ -7,6 +7,8 @@ import {
   ItemFiltersDataDTO,
   ItemsData,
   ItemsDataDTO,
+  ListingsData,
+  ListingsDataDTO,
   LoginDataDTO,
   SignUpDataDTO,
   TransactionDaysData,
@@ -99,4 +101,12 @@ export const getItemTransactionsByPage = async (
 ): Promise<TransactionPageData> => {
   const endpoint = `${ApiRoutes.transactions}?page=${page}&name=${item}`;
   return fetchData<TransactionDaysDataDTO>(endpoint);
+};
+
+export const getItemListingsByPage = async (
+  item: string,
+  page: number
+): Promise<ListingsData> => {
+  const endpoint = `${ApiRoutes.listings}?page=${page}&name=${item}`;
+  return fetchData<ListingsDataDTO>(endpoint);
 };
