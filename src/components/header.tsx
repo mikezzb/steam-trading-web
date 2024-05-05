@@ -72,6 +72,7 @@ const PriceMenu: FC = () => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        disableScrollLock
       >
         {Currency.currencies.map((currency) => (
           <MenuItem key={currency} onClick={() => handleItemClick(currency)}>

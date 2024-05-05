@@ -1,2 +1,17 @@
 .item-page {
 }
+
+.item-banner {
+  row-gap: var(--item-gap);
+
+  --banner-padding: 26px;
+}
+
+.item-banner-row {
+  column-gap: var(--item-gap);
+  width: 100%;
+
+  > div {
+    flex: 1;
+  }
+}

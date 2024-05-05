@@ -7,7 +7,11 @@ import { FC } from "react";
 import styles from "@/styles/pages/item.module.scss";
 import clsx from "clsx";
 import guard from "@/components/guardRoute";
-import { ItemBanner } from "@/components/item";
+import { ItemBannerCard, ItemPreviewCard } from "@/components/item";
+import {
+  ItemListingsCard,
+  ItemTransactionCard,
+} from "@/components/transactions";
 
 type ItemProps = {
   params: {
@@ -28,7 +32,16 @@ const ItemPage: FC<ItemProps> = (props) => {
 
   return (
     <main className={clsx(styles["item-page"], "page column")}>
-      <ItemBanner item={data.item} />
+      <div className={clsx(styles["item-banner"], "column")}>
+        <div className={clsx(styles["item-banner-row"], "row")}>
+          <ItemPreviewCard item={data.item} />
+          <ItemBannerCard item={data.item} />
+        </div>
+        <div className={clsx(styles["item-banner-row"], "row")}>
+          <ItemTransactionCard item={data.item} />
+          <ItemListingsCard item={data.item} />
+        </div>
+      </div>
     </main>
   );
 };

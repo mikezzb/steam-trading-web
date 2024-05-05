@@ -9,7 +9,6 @@ import { getItemPreviewUrl } from "@/utils/routes";
 import { MdOutlineArrowOutward } from "react-icons/md";
 import NextLink from "next/link";
 import { MarketNames } from "@/constants";
-import { ItemListingsCard, ItemTransactionCard } from "./transactions";
 import { PropsWithItem } from "@/types/ui";
 
 type ItemCardProps = {
@@ -71,7 +70,7 @@ const ItemBreadcrumb: FC<PropsWithItem> = ({ item }) => {
   );
 };
 
-const ItemPreviewCard: FC<PropsWithItem> = ({ item }) => (
+export const ItemPreviewCard: FC<PropsWithItem> = ({ item }) => (
   <Paper className={clsx(styles["preview-wrapper"], "column")}>
     <ItemBreadcrumb item={item} />
     <div className={clsx(styles["image-container"])}>
@@ -109,7 +108,7 @@ const ItemPreviewCard: FC<PropsWithItem> = ({ item }) => (
   </Paper>
 );
 
-const ItemBannerCard: FC<PropsWithItem> = ({ item }) => (
+export const ItemBannerCard: FC<PropsWithItem> = ({ item }) => (
   <Paper className={clsx(styles["item-banner-card"], "column")}>
     <div className={styles["item-category"]}>{item.category}</div>
     <div className={styles["item-skin"]}>{item.skin}</div>
@@ -126,26 +125,3 @@ const ItemBannerCard: FC<PropsWithItem> = ({ item }) => (
     </div>
   </Paper>
 );
-
-export const ItemBanner: FC<PropsWithItem> = ({ item }) => {
-  return (
-    <div className={clsx(styles["item-banner"], "column")}>
-      <div className={clsx(styles["item-banner-row"], "row")}>
-        <ItemPreviewCard item={item} />
-        <ItemBannerCard item={item} />
-      </div>
-      <div className={clsx(styles["item-banner-row"], "row")}>
-        <ItemTransactionCard item={item} />
-        <ItemListingsCard item={item} />
-      </div>
-
-      {/* <div className={clsx(styles["item-banner-left"], "column")}>
-        <ItemPreviewCard item={item} />
-        <ItemTransactionCard item={item} />
-      </div>
-      <div className={clsx(styles["item-banner-right"], "column")}>
-        <ItemListingsCard item={item} />
-      </div> */}
-    </div>
-  );
-};
