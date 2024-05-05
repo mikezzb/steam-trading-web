@@ -41,6 +41,7 @@ import { FCC, PropsWithItem } from "@/types/ui";
 import Image from "next/image";
 import { MdOpenInNew } from "react-icons/md";
 import { getListingUrl } from "@/utils/cs";
+import Loading from "./loading";
 
 type MedianPrice = {
   x: Date;
@@ -218,7 +219,8 @@ export const ItemListingsCard: FC<PropsWithItem> = ({ item }) => {
   return (
     <Paper className={clsx(styles["item-listings-card"], "column")}>
       <span className={styles["banner-title"]}>Listings</span>
-      <TableContainer>
+      {isPending && <Loading fixed />}
+      <TableContainer className={clsx(styles["listings-table"])}>
         <StyledTable>
           <StyledTableHead>
             <TableRow>
@@ -265,7 +267,7 @@ export const ItemListingsCard: FC<PropsWithItem> = ({ item }) => {
         count={data?.total || 0}
         rowsPerPage={ApiConfig.listingPageSize}
         page={page}
-        onPageChange={() => setPage((page) => page + 1)}
+        onPageChange={(e, p) => setPage(p)}
       />
     </Paper>
   );
