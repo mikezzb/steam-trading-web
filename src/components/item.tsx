@@ -71,65 +71,81 @@ const ItemBreadcrumb: FC<PropsWithItem> = ({ item }) => {
   );
 };
 
+const ItemPreviewCard: FC<PropsWithItem> = ({ item }) => (
+  <Paper className={clsx(styles["preview-wrapper"], "column")}>
+    <ItemBreadcrumb item={item} />
+    <div className={clsx(styles["image-container"])}>
+      <Image src={getItemPreviewUrl(item._id)} alt={item.name} fill />
+    </div>
+    <div className={clsx(styles["preview-actions"], "row")}>
+      <Link
+        className={clsx(styles["preview-link"], "row center")}
+        href={getBuffUrl(item._id)}
+        target="_blank"
+        color={"inherit"}
+        underline="hover"
+      >
+        View at Buff <MdOutlineArrowOutward />
+      </Link>
+      <Link
+        className={clsx(styles["preview-link"], "row center")}
+        href={getSteamMarketUrl(item.name)}
+        target="_blank"
+        color={"inherit"}
+        underline="hover"
+      >
+        Check on Steam Market <MdOutlineArrowOutward />
+      </Link>
+      <Link
+        className={clsx(styles["preview-link"], "row center")}
+        href={getItemPreviewUrl(item._id)}
+        target="_blank"
+        color={"inherit"}
+        underline="hover"
+      >
+        Screenshot <MdOutlineArrowOutward />
+      </Link>
+    </div>
+  </Paper>
+);
+
+const ItemBannerCard: FC<PropsWithItem> = ({ item }) => (
+  <Paper className={clsx(styles["item-banner-card"], "column")}>
+    <div className={styles["item-category"]}>{item.category}</div>
+    <div className={styles["item-skin"]}>{item.skin}</div>
+    <div className={styles["item-exterior"]}>{item.exterior}</div>
+
+    <div className={styles["item-price"]}>
+      {item.lowestPrice?.price?.toString() || "No Listing"}
+    </div>
+
+    <div className={clsx(styles["item-actions"], "column")}>
+      <Button className={styles["sub-btn"]} variant="contained">
+        Subscribe
+      </Button>
+    </div>
+  </Paper>
+);
+
 export const ItemBanner: FC<PropsWithItem> = ({ item }) => {
   return (
-    <div className={clsx(styles["item-banner"], "row")}>
-      <div className={clsx(styles["item-banner-left"], "column")}>
-        <Paper className={clsx(styles["preview-wrapper"], "column")}>
-          <ItemBreadcrumb item={item} />
-          <div className={clsx(styles["image-container"])}>
-            <Image src={getItemPreviewUrl(item._id)} alt={item.name} fill />
-          </div>
-          <div className={clsx(styles["preview-actions"], "row")}>
-            <Link
-              className={clsx(styles["preview-link"], "row center")}
-              href={getBuffUrl(item._id)}
-              target="_blank"
-              color={"inherit"}
-              underline="hover"
-            >
-              View at Buff <MdOutlineArrowOutward />
-            </Link>
-            <Link
-              className={clsx(styles["preview-link"], "row center")}
-              href={getSteamMarketUrl(item.name)}
-              target="_blank"
-              color={"inherit"}
-              underline="hover"
-            >
-              Check on Steam Market <MdOutlineArrowOutward />
-            </Link>
-            <Link
-              className={clsx(styles["preview-link"], "row center")}
-              href={getItemPreviewUrl(item._id)}
-              target="_blank"
-              color={"inherit"}
-              underline="hover"
-            >
-              Screenshot <MdOutlineArrowOutward />
-            </Link>
-          </div>
-        </Paper>
+    <div className={clsx(styles["item-banner"], "column")}>
+      <div className={clsx(styles["item-banner-row"], "row")}>
+        <ItemPreviewCard item={item} />
+        <ItemBannerCard item={item} />
+      </div>
+      <div className={clsx(styles["item-banner-row"], "row")}>
+        <ItemTransactionCard item={item} />
+        <ItemListingsCard item={item} />
+      </div>
+
+      {/* <div className={clsx(styles["item-banner-left"], "column")}>
+        <ItemPreviewCard item={item} />
         <ItemTransactionCard item={item} />
       </div>
       <div className={clsx(styles["item-banner-right"], "column")}>
-        <Paper className={clsx(styles["item-banner-card"], "column")}>
-          <div className={styles["item-category"]}>{item.category}</div>
-          <div className={styles["item-skin"]}>{item.skin}</div>
-          <div className={styles["item-exterior"]}>{item.exterior}</div>
-
-          <div className={styles["item-price"]}>
-            {item.lowestPrice?.price?.toString() || "No Listing"}
-          </div>
-
-          <div className={clsx(styles["item-actions"], "column")}>
-            <Button className={styles["sub-btn"]} variant="contained">
-              Subscribe
-            </Button>
-          </div>
-        </Paper>
         <ItemListingsCard item={item} />
-      </div>
+      </div> */}
     </div>
   );
 };

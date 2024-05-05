@@ -12,6 +12,8 @@ import {
   TablePagination,
   TableRow,
   Tabs,
+  Typography,
+  styled,
 } from "@mui/material";
 import clsx from "clsx";
 import { FC, useState } from "react";
@@ -35,7 +37,7 @@ import {
 import { formatWear, openLink } from "@/utils/ui";
 import { getItemPreviewUrl } from "@/utils/routes";
 import { getItemId } from "@/utils/data";
-import { PropsWithItem } from "@/types/ui";
+import { FCC, PropsWithItem } from "@/types/ui";
 import Image from "next/image";
 import { MdOpenInNew } from "react-icons/md";
 import { getListingUrl } from "@/utils/cs";
@@ -139,7 +141,7 @@ const SalesChart: FC<SalesChartProps> = ({ x, y, dataDays }) => {
         },
       ]}
       margin={{ right: 50, left: 80 }}
-      height={320}
+      height={480}
     />
   );
 };
@@ -155,7 +157,7 @@ const ItemTransactionStats: FC<PropsWithItem> = ({ item: { name } }) => {
   const { x, y } = getTransactionStats(data?.transactions || []);
 
   return (
-    <>
+    <div className={clsx(styles["stats-container"], "column")}>
       <SalesChart x={x} y={y} dataDays={days} />
       <div className={clsx(styles["tran-days-tabs"], "row")}>
         {TransactionQueryDays.map((d, i) => (
@@ -171,58 +173,74 @@ const ItemTransactionStats: FC<PropsWithItem> = ({ item: { name } }) => {
           </span>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(even)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+  height: 72,
+}));
+
+const IconCell: FCC = ({ children }) => (
+  <TableCell className={clsx(styles["icon-cell"])}>
+    <div className={clsx(styles["item-icon-preview"], "image-container")}>
+      {children}
+    </div>
+  </TableCell>
+);
+
+const StyledTable = styled(Table)(({ theme }) => ({
+  "td, th": {
+    border: "none",
+  },
+}));
+
+const StyledTableHead = styled(TableHead)(({ theme }) => ({
+  backgroundColor: theme.palette.action.focus,
+  width: "100%",
+}));
+
 export const ItemListingsCard: FC<PropsWithItem> = ({ item }) => {
+  // 0-indexed page
+  const [page, setPage] = useState(0);
   const { data, isPending, isError } = useQuery({
-    queryKey: [ApiRoutes.listings, item.name, 1],
-    queryFn: () => getItemListingsByPage(item.name, 1),
+    queryKey: [ApiRoutes.listings, item.name, page + 1],
+    queryFn: () => getItemListingsByPage(item.name, page + 1),
   });
 
   return (
     <Paper className={clsx(styles["item-listings-card"], "column")}>
+      <span className={styles["banner-title"]}>Listings</span>
       <TableContainer>
-        <Table
-          // hide the borders
-          sx={{
-            "td, th": {
-              border: "none",
-            },
-          }}
-        >
-          <TableHead>
+        <StyledTable>
+          <StyledTableHead>
             <TableRow>
               <TableCell></TableCell>
               <TableCell>Wear</TableCell>
               <TableCell>Paintseed</TableCell>
               <TableCell>Market</TableCell>
               <TableCell>Price</TableCell>
+              <TableCell>Buy</TableCell>
             </TableRow>
-          </TableHead>
+          </StyledTableHead>
           <TableBody>
             {data?.listings.map((listing) => (
-              <TableRow key={listing._id}>
-                <TableCell
-                  className={clsx(styles["icon-cell"])}
-                  component="th"
-                  scope="row"
-                >
-                  <div
-                    className={clsx(
-                      styles["item-icon-preview"],
-                      "image-container"
-                    )}
-                  >
-                    <Image
-                      src={getItemPreviewUrl(item._id)}
-                      alt={listing.name}
-                      width={36}
-                      height={36}
-                    />
-                  </div>
-                </TableCell>
+              <StyledTableRow key={listing._id}>
+                <IconCell>
+                  <Image
+                    src={getItemPreviewUrl(item._id)}
+                    width={36}
+                    height={36}
+                    alt={item.name}
+                  />
+                </IconCell>
                 <TableCell>{formatWear(listing.paintWear)}</TableCell>
                 <TableCell>{listing.paintSeed}</TableCell>
                 <TableCell>{listing.market}</TableCell>
@@ -235,10 +253,10 @@ export const ItemListingsCard: FC<PropsWithItem> = ({ item }) => {
                     <MdOpenInNew />
                   </IconButton>
                 </TableCell>
-              </TableRow>
+              </StyledTableRow>
             ))}
           </TableBody>
-        </Table>
+        </StyledTable>
       </TableContainer>
 
       <TablePagination
@@ -246,8 +264,8 @@ export const ItemListingsCard: FC<PropsWithItem> = ({ item }) => {
         component="div"
         count={data?.total || 0}
         rowsPerPage={ApiConfig.listingPageSize}
-        page={0}
-        onPageChange={() => {}}
+        page={page}
+        onPageChange={() => setPage((page) => page + 1)}
       />
     </Paper>
   );
@@ -260,52 +278,45 @@ const ItemTransactionRecent: FC<PropsWithItem> = ({ item }) => {
   });
 
   return (
-    <TableContainer>
-      <Table aria-label="simple table">
-        <TableHead>
+    <TableContainer className={styles["recent-table"]}>
+      <StyledTable>
+        <StyledTableHead>
           <TableRow>
             <TableCell></TableCell>
-            <TableCell align="right">Price</TableCell>
-            <TableCell align="right">Wear</TableCell>
-            <TableCell align="right">Paintseed</TableCell>
-            <TableCell align="right">Market</TableCell>
-            <TableCell align="right">Time</TableCell>
+            <TableCell>Date</TableCell>
+            <TableCell>Wear</TableCell>
+            <TableCell>Paintseed</TableCell>
+            <TableCell>Market</TableCell>
+            {/* <TableCell></TableCell>
+            <TableCell></TableCell>
+            <TableCell></TableCell> */}
+            <TableCell>Price</TableCell>
           </TableRow>
-        </TableHead>
+        </StyledTableHead>
         <TableBody>
           {data?.transactions.map((transaction) => (
-            <TableRow key={transaction._id}>
-              <TableCell component="th" scope="row">
-                <div
-                  className={clsx(
-                    styles["item-icon-preview"],
-                    "image-container"
-                  )}
-                >
-                  <Image
-                    src={getItemPreviewUrl(item._id)}
-                    alt={transaction.name}
-                    width={40}
-                    height={40}
-                  />
-                </div>
-              </TableCell>
-              <TableCell align="right">
-                {new Currency(transaction.price).toString()}
-              </TableCell>
-              <TableCell align="right">
-                {formatWear(transaction.paintWear)}
-              </TableCell>
-              <TableCell align="right">{transaction.paintSeed}</TableCell>
-              <TableCell align="right">{transaction.metadata.market}</TableCell>
-              <TableCell align="right">
-                {/* Date: YYYY-MM-DD */}
+            <StyledTableRow key={transaction._id}>
+              <IconCell>
+                <Image
+                  src={getItemPreviewUrl(item._id)}
+                  width={36}
+                  height={36}
+                  alt={item.name}
+                />
+              </IconCell>
+              <TableCell>
                 {new Date(transaction.createdAt).toLocaleDateString()}
               </TableCell>
-            </TableRow>
+              <TableCell>{formatWear(transaction.paintWear)}</TableCell>
+              <TableCell>{transaction.paintSeed}</TableCell>
+              <TableCell>{transaction.metadata.market}</TableCell>
+              <TableCell>
+                {new Currency(transaction.price).toString()}
+              </TableCell>
+            </StyledTableRow>
           ))}
         </TableBody>
-      </Table>
+      </StyledTable>
     </TableContainer>
   );
 };

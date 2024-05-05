@@ -68,10 +68,10 @@ export const protectedRoutes = ["/items"];
 
 export const ItemsQueryParams = ["name", "category", "skin", "exterior"];
 
-export const TransactionQueryDays = [21, 14, 7];
+export const TransactionQueryDays = [60, 30, 14, 7];
 
-export const TransactionQueryDaysLabel = ["3W", "2W", "1W"];
+export const TransactionQueryDaysLabel = ["2M", "1M", "2W", "1W"];
 
 export const TransactionConfig = {
-  statDays: 21,
+  statDays: TransactionQueryDays[0],
 };

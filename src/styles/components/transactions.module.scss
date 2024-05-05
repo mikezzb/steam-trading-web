@@ -21,8 +21,8 @@
 }
 
 .item-icon-preview {
-  width: fit-content;
-  height: fit-content;
+  height: 36px;
+  width: 36px;
 }
 
 .icon-cell {
@@ -37,5 +37,18 @@
 }
 
 .item-listings-card {
-  padding: 12px 12px;
+  padding: 24px;
+}
+
+.banner-title {
+  font-weight: 600;
+  font-size: 22px;
+  margin-top: 12px;
+
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+.recent-table {
+  margin-top: 14px;
 }

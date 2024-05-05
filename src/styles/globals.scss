@@ -32,6 +32,8 @@
   --item-gap: 2px;
   --header-height: 64px;
   --page-padding: 40px;
+
+  --scrollbar-width: 8px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -114,6 +116,9 @@ textarea {
   padding: 0 var(--page-padding);
 
   margin-top: var(--header-height);
+
+  // assume the page will have a scrollbar
+  padding-right: calc(var(--page-padding) - var(--scrollbar-width));
 }
 
 // Remove default styles
@@ -134,14 +139,16 @@ textarea::-webkit-inner-spin-button {
 }
 
 input[type="number"] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 textarea[type="number"] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: var(--scrollbar-width);
   background: transparent;
 }
 

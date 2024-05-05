@@ -31,41 +31,24 @@
 
 // Banner
 
-.item-banner {
-  height: fit-content;
-  column-gap: var(--item-gap);
-
-  --banner-padding: 26px;
-}
-
-.item-banner-left {
-  flex: 1;
-  height: fit-content;
-
-  row-gap: var(--item-gap);
-}
-
-.item-banner-right {
-  display: flex;
-  flex-direction: column;
-  row-gap: var(--item-gap);
-  flex: 1;
+.item-banner-card {
+  row-gap: 12px;
 
   .item-category {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .item-skin {
-    font-size: 22px;
+    font-size: 26px;
   }
 
   .item-exterior {
-    font-size: 14px;
+    font-size: 18px;
   }
 
   .item-price {
-    margin-top: 10px;
-    font-size: 38px;
+    margin-top: 18px;
+    font-size: 44px;
   }
 }
 
@@ -112,4 +95,19 @@
 
 .item-breadcrumb {
   margin-left: 0;
+}
+
+.item-banner {
+  row-gap: var(--item-gap);
+
+  --banner-padding: 26px;
+}
+
+.item-banner-row {
+  column-gap: var(--item-gap);
+  width: 100%;
+
+  > div {
+    flex: 1;
+  }
 }
