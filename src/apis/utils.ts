@@ -4,6 +4,7 @@ import { DataWithPaging, FetchParams, ResPayload } from "@/types/apis";
 
 const defaultHeaders = {
   "Content-Type": "application/json",
+  // Accept: "application/json",
 };
 
 export type FetchDataParams = FetchParams & {
@@ -35,6 +36,7 @@ export const fetchData = async <T = any>(
     headers: reqHeaders,
     method,
     cache,
+    mode: "cors",
   };
   if (body) {
     // clean empty values

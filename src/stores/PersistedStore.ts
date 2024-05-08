@@ -21,7 +21,6 @@ class PersistedStore {
       (acc, key) => {
         const isPrimitive = isNaivePrimitive(this.defaultValues[key]);
         acc[key] = isPrimitive;
-        console.log("key: ", key, "isPrimitive: ", isPrimitive);
         return acc;
       },
       {}

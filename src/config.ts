@@ -8,7 +8,7 @@ const ApiConfigCommon = {
 
 const ApiProdConfig = {
   ...ApiConfigCommon,
-  url: "http://localhost:8080/api",
+  url: "https://cs2-trade-93e027a884af.herokuapp.com/api",
   staleTime: 1000 * 60 * 1, // 1 minute
   gcTime: 1000 * 60 * 5, // 5 minutes
 };
@@ -20,8 +20,9 @@ const ApiTestConfig = {
   gcTime: 1000 * 1,
 };
 
-export const ApiConfig =
-  process.env.NODE_ENV === "production" ? ApiProdConfig : ApiTestConfig;
+const isProd = process.env.NODE_ENV === "production";
+
+export const ApiConfig = isProd ? ApiProdConfig : ApiTestConfig;
 
 export const AppConfig = {
   url: "http://localhost:3000",
