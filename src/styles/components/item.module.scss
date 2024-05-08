@@ -69,6 +69,8 @@
 
 .item-actions {
   margin-top: auto;
+  width: 100%;
+  column-gap: 4px;
 }
 
 .preview-wrapper {
@@ -89,7 +91,12 @@
 }
 
 .sub-btn {
-  max-width: 500px;
+  width: 420px;
+  height: 54px;
+}
+
+.sub-count {
+  width: 54px;
   height: 54px;
 }
 
@@ -110,6 +117,47 @@
   h6 {
     margin-bottom: 8px;
   }
+}
+
+.sub-list-modal {
+  width: 500px;
+  overflow-y: scroll;
+  max-height: 80%;
+}
+
+.label-row {
+  column-gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+
+  .label-row-label {
+    text-transform: capitalize;
+    font-weight: 500;
+  }
+}
+
+.sub-item {
+  justify-content: space-between;
+}
+
+.sub-list-item {
+  padding: 4px 0;
+  flex: 1;
+}
+
+.sub-actions {
+  flex-direction: column;
+  height: fit-content;
+  margin-top: auto;
+  margin-bottom: auto;
+  width: fit-content;
+}
+
+.sub-item-seeds {
+  column-gap: 4px;
+  row-gap: 4px;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 .sub-form {

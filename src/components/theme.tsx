@@ -12,6 +12,9 @@ const ThemeConfig = createTheme({
     secondary: {
       main: "#52FFFF",
     },
+    error: {
+      main: "#ef1f1f",
+    },
   },
 });
 

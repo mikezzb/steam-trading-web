@@ -10,7 +10,10 @@ import {
   ListingsData,
   ListingsDataDTO,
   LoginDataDTO,
+  ResPayload,
   SignUpDataDTO,
+  SubscriptionData,
+  SubscriptionDataDTO,
   TransactionDaysData,
   TransactionDaysDataDTO,
   TransactionPageData,
@@ -94,6 +97,31 @@ type SubscribeItemForm = Omit<SubscriptionDTO, "_id" | "ownerId">;
 export const subscribeItem = async (body: SubscribeItemForm) => {
   const endpoint = `${ApiRoutes.subscriptions}`;
   return fetchData<SubscriptionDTO>(endpoint, { body, method: "POST" });
+};
+
+export const deleteSubscription = async (subId: string) => {
+  const endpoint = `${ApiRoutes.subscriptions}/${subId}`;
+  return fetchData<any>(endpoint, { method: "DELETE" });
+};
+
+type EditSubscriptionParams = {
+  id: string;
+  subscription: SubscribeItemForm;
+};
+
+export const editSubscription = async ({
+  id,
+  subscription,
+}: EditSubscriptionParams) => {
+  const endpoint = `${ApiRoutes.subscriptions}/${id}`;
+  return fetchData<any>(endpoint, { body: subscription, method: "PUT" });
+};
+
+export const getSubscriptions = async (
+  itemName: string
+): Promise<SubscriptionData> => {
+  const endpoint = `${ApiRoutes.subscriptions}?name=${itemName}`;
+  return fetchData<SubscriptionDataDTO>(endpoint);
 };
 
 export const getItemTransactionsByDays = async (

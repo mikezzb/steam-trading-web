@@ -6,7 +6,10 @@ const defaultHeaders = {
   "Content-Type": "application/json",
 };
 
-type FetchDataParams = FetchParams & {};
+type FetchDataParams = FetchParams & {
+  // Remove empty values from body, default is true
+  removeEmptyBodyValues?: boolean;
+};
 
 // Fetch wrapper to do request
 export const fetchData = async <T = any>(
@@ -14,7 +17,13 @@ export const fetchData = async <T = any>(
   params: FetchDataParams = {},
   cache: RequestCache = "default"
 ) => {
-  const { method = "GET", body, headers = {}, token } = params;
+  const {
+    method = "GET",
+    body,
+    headers = {},
+    token,
+    removeEmptyBodyValues,
+  } = params;
   // Add API url to endpoint
   endpoint = `${ApiConfig.url}/${endpoint}`;
   const reqHeaders = {
@@ -28,6 +37,10 @@ export const fetchData = async <T = any>(
     cache,
   };
   if (body) {
+    // clean empty values
+    if (removeEmptyBodyValues !== false) {
+      removeEmptyValues(body);
+    }
     reqInit.body = JSON.stringify(body);
   }
 

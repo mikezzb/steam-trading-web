@@ -1,5 +1,11 @@
-import { ItemDTO, ListingDTO, TransactionDTO, UserDTO } from "./dtos";
-import { Item, Listing, Transaction } from "./transformed";
+import {
+  ItemDTO,
+  ListingDTO,
+  SubscriptionDTO,
+  TransactionDTO,
+  UserDTO,
+} from "./dtos";
+import { Item, Listing, Subscription, Transaction } from "./transformed";
 
 export type ResPayload<T = any> = {
   code: number;
@@ -46,6 +52,14 @@ export type ListingsData = DataWithPaging<{
 
 export type TransactionDaysDataDTO = {
   transactions: TransactionDTO[];
+};
+
+export type SubscriptionDataDTO = {
+  subscriptions: SubscriptionDTO[];
+};
+
+export type SubscriptionData = {
+  subscriptions: Subscription[];
 };
 
 export type TransactionDaysData = {

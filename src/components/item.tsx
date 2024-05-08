@@ -1,8 +1,11 @@
 import { getBuffUrl, getSteamMarketUrl } from "@/utils/cs";
 import {
+  Badge,
   Breadcrumbs,
   Button,
   Chip,
+  Divider,
+  IconButton,
   Link,
   MenuItem,
   Modal,
@@ -11,19 +14,30 @@ import {
   Typography,
 } from "@mui/material";
 import clsx from "clsx";
-import { FC, useReducer, useState } from "react";
+import { FC, useEffect, useReducer, useState } from "react";
 import styles from "@/styles/components/item.module.scss";
 import Image from "next/image";
 import { Item, Subscription } from "@/types/transformed";
 import { getItemPreviewUrl } from "@/utils/routes";
-import { MdOutlineArrowOutward } from "react-icons/md";
+import {
+  MdOutlineArrowOutward,
+  MdOutlineDelete,
+  MdOutlineEdit,
+  MdOutlineNotifications,
+} from "react-icons/md";
 import NextLink from "next/link";
 import { MarketNames, SubNotiTypes } from "@/constants";
-import { PropsWithItem } from "@/types/ui";
-import { useUserContext } from "@/stores";
+import { FCC, PropsWithItem } from "@/types/ui";
+import { useUIContext, useUserContext } from "@/stores";
 import TextField from "./textfield";
-import { subscribeItem } from "@/apis";
-import { useMutation } from "@tanstack/react-query";
+import {
+  ApiRoutes,
+  deleteSubscription,
+  editSubscription,
+  getSubscriptions,
+  subscribeItem,
+} from "@/apis";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Loading from "./loading";
 
 type ItemCardProps = {
@@ -123,22 +137,6 @@ export const ItemPreviewCard: FC<PropsWithItem> = ({ item }) => (
   </Paper>
 );
 
-type ItemSubscribeModalProps = PropsWithItem<{
-  open: boolean;
-  onClose: () => void;
-}>;
-
-const SubTextFields = [
-  {
-    label: "Notification ID (e.g. Telegram Chat ID)",
-    name: "notiId",
-  },
-  {
-    label: "Max Premium (%)",
-    name: "maxPremium",
-  },
-];
-
 // MUI Chips Select
 const ChipSelect = ({ label, options, selected, onChange }: any) => {
   return (
@@ -159,16 +157,36 @@ const ChipSelect = ({ label, options, selected, onChange }: any) => {
   );
 };
 
+type PassiveModalProps = {
+  open: boolean;
+  onClose: () => void;
+  onSubmit?: (val: any) => void;
+  loading?: boolean;
+};
+
+type ItemSubscribeModalProps = PropsWithItem<
+  PassiveModalProps & {
+    initialState: Subscription | null;
+  }
+>;
+
+const parsePaintSeeds = (paintSeeds: string) =>
+  (paintSeeds ?? "")
+    .split(",")
+    .map((s: string) => parseInt(s.trim()))
+    .filter((v) => !isNaN(v));
+
 const ItemSubscribeModal: FC<ItemSubscribeModalProps> = ({
   item,
   open,
   onClose,
+  onSubmit,
+  loading,
+  initialState,
 }) => {
   const userStore = useUserContext();
+  const uiStore = useUIContext();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const subscribeMutation = useMutation({
-    mutationFn: subscribeItem,
-  });
   const [form, setForm] = useReducer(
     (state: any, newState: any) => ({
       ...state,
@@ -184,6 +202,12 @@ const ItemSubscribeModal: FC<ItemSubscribeModalProps> = ({
     }
   );
 
+  useEffect(() => {
+    if (initialState) {
+      setForm(initialState);
+    }
+  }, [initialState]);
+
   const handleChange = (e: any, label: string) => {
     setForm({ [label]: e.target.value });
   };
@@ -192,6 +216,14 @@ const ItemSubscribeModal: FC<ItemSubscribeModalProps> = ({
     const newErrors: Record<string, string> = {};
     if (!form.paintSeeds) {
       newErrors.paintSeeds = "Paint Seeds Required";
+    }
+    const parsedPaintSeeds = parsePaintSeeds(form.paintSeeds);
+    if (
+      parsedPaintSeeds.some((s: any) => isNaN(s)) ||
+      !parsedPaintSeeds.length
+    ) {
+      newErrors.paintSeeds =
+        "Paint Seeds Must be Numbers, Separated by Comma (e.g. 123, 456)";
     }
     if (!form.maxPremium) {
       newErrors.maxPremium = "Max Premium Required";
@@ -210,14 +242,15 @@ const ItemSubscribeModal: FC<ItemSubscribeModalProps> = ({
 
     const sub: Subscription = {
       ...form,
-      paintSeeds: form.paintSeeds
-        .split(",")
-        .map((s: string) => parseInt(s.trim())),
+      paintSeeds: parsePaintSeeds(form.paintSeeds),
       rarities: form.rarities,
       maxPremium: `${form.maxPremium}%`,
     };
-    await subscribeMutation.mutateAsync(sub);
-    onClose();
+
+    // await subscribeMutation.mutateAsync(sub);
+    // onClose();
+    // uiStore.success("Subscribed Successfully");
+    onSubmit && onSubmit(sub);
   };
 
   return (
@@ -226,6 +259,7 @@ const ItemSubscribeModal: FC<ItemSubscribeModalProps> = ({
       open={open}
       onClose={onClose}
       aria-labelledby="subscribe-modal"
+      keepMounted={false}
     >
       <Paper className={clsx(styles["sub-modal"], "column")}>
         <Typography variant="h6">Subscribe to {item.name}</Typography>
@@ -263,9 +297,9 @@ const ItemSubscribeModal: FC<ItemSubscribeModalProps> = ({
             variant="contained"
             onClick={handleSubmit}
             className={styles["sub-submit-btn"]}
-            disabled={subscribeMutation.isPending}
+            disabled={loading}
           >
-            {subscribeMutation.isPending ? <Loading /> : "Submit"}
+            {loading ? <Loading /> : "Submit"}
           </Button>
         </form>
       </Paper>
@@ -273,8 +307,215 @@ const ItemSubscribeModal: FC<ItemSubscribeModalProps> = ({
   );
 };
 
+type LabelRowProps = {
+  label: string;
+  className?: string;
+  contentClassName?: string;
+};
+
+const LabelRow: FCC<LabelRowProps> = ({
+  label,
+  children,
+  className,
+  contentClassName,
+}) => (
+  <div className={clsx(styles["label-row"], "row", className)}>
+    <div
+      className={clsx(styles["label-row-label"], "label")}
+    >{`${label}:`}</div>
+    <div className={clsx(styles["label-row-content"], contentClassName)}>
+      {children}
+    </div>
+  </div>
+);
+
+type ItemSubscribeListModalProps = {
+  subscriptions: Subscription[];
+  onDelete: (sub: Subscription) => void;
+  onEdit: (sub: Subscription) => void;
+} & PassiveModalProps;
+
+const ItemSubscribeListModal: FC<ItemSubscribeListModalProps> = ({
+  subscriptions,
+  open,
+  onClose,
+  onDelete,
+  onEdit,
+}) => {
+  return (
+    <Modal disableScrollLock open={open} onClose={onClose}>
+      <Paper
+        className={clsx(
+          styles["sub-modal"],
+          "column",
+          styles["sub-list-modal"]
+        )}
+      >
+        <Typography variant="h6">Subscriptions</Typography>
+        {subscriptions.map((sub: Subscription, i) => (
+          <>
+            <div className={clsx(styles["sub-item"], "row")}>
+              <div
+                className={clsx(styles["sub-list-item"], "column")}
+                key={sub._id}
+              >
+                <LabelRow
+                  label="Paint Seeds"
+                  contentClassName={clsx(styles["sub-item-seeds"], "row")}
+                >
+                  {sub.paintSeeds?.map((seed) => (
+                    <Chip
+                      key={seed}
+                      label={seed}
+                      color="primary"
+                      size="small"
+                    />
+                  ))}
+                </LabelRow>
+                <LabelRow label="Max Premium">
+                  <div>{sub.maxPremium}</div>
+                </LabelRow>
+                <LabelRow label={sub.notiType}>
+                  <div>{sub.notiId}</div>
+                </LabelRow>
+              </div>
+              <div className={clsx(styles["sub-actions"], "row")}>
+                <IconButton onClick={() => onDelete(sub)}>
+                  <MdOutlineDelete />
+                </IconButton>
+                <IconButton onClick={() => onEdit(sub)}>
+                  <MdOutlineEdit />
+                </IconButton>
+              </div>
+            </div>
+            {i !== subscriptions.length - 1 && <Divider />}
+          </>
+        ))}
+      </Paper>
+    </Modal>
+  );
+};
+
+enum SubModal {
+  None,
+  SubscribeForm,
+  Subscribes,
+}
+
+const ItemSubRow: FC<PropsWithItem> = ({ item }) => {
+  const [modal, setModal] = useState(SubModal.Subscribes);
+  const [editForm, setEditForm] = useState<Subscription | null>(null);
+  const uiStore = useUIContext();
+
+  const { isPending, refetch, data } = useQuery({
+    queryKey: [ApiRoutes.subscriptions, item.name],
+    queryFn: () => getSubscriptions(item.name),
+  });
+
+  const deleteSubMutation = useMutation({
+    mutationFn: deleteSubscription,
+  });
+
+  const editSubMutation = useMutation({
+    mutationFn: editSubscription,
+  });
+
+  const addSubMutation = useMutation({
+    mutationFn: subscribeItem,
+  });
+
+  const subCount = data?.subscriptions?.length || 0;
+
+  // refetch on modal close
+  // useEffect(() => {
+  //   if (modal === SubModal.None && !isPending) {
+  //     console.log("Refetching");
+  //     refetch();
+  //   }
+  // }, [modal, isPending, refetch]);
+
+  const onSubFormSubmit = async (sub: Subscription) => {
+    const isEdit = !!editForm;
+    if (isEdit) {
+      await editSubMutation.mutateAsync({
+        id: editForm._id,
+        subscription: sub,
+      });
+      // clear edit form
+      setEditForm(null);
+    } else {
+      await addSubMutation.mutateAsync(sub);
+    }
+
+    // refetch on submit
+    refetch();
+
+    setModal(SubModal.None);
+    uiStore.success(isEdit ? "Subscription Updated" : "Subscription Added");
+  };
+
+  const onSubFormClose = () => {
+    setModal(SubModal.None);
+    setEditForm(null);
+  };
+
+  const onEditClick = (sub: Subscription) => {
+    setEditForm({
+      ...sub,
+      maxPremium: sub?.maxPremium?.replace("%", "") || "5",
+      paintSeeds: (sub?.paintSeeds ?? []).join(", ") as any,
+    });
+    setModal(SubModal.SubscribeForm);
+  };
+
+  const onDeleteClick = async (sub: Subscription) => {
+    await deleteSubMutation.mutateAsync(sub._id);
+    // refetch on delete
+    refetch();
+    uiStore.success("Subscription Deleted");
+  };
+
+  return (
+    <>
+      <div className={clsx(styles["item-actions"], "row")}>
+        <Button
+          className={styles["sub-btn"]}
+          variant="contained"
+          onClick={() => setModal(SubModal.SubscribeForm)}
+        >
+          Subscribe
+        </Button>
+        {data?.subscriptions?.length && (
+          <IconButton
+            className={clsx(styles["sub-count"])}
+            onClick={() => setModal(SubModal.Subscribes)}
+          >
+            <Badge badgeContent={subCount} color="primary">
+              <MdOutlineNotifications />
+            </Badge>
+          </IconButton>
+        )}
+      </div>
+      <ItemSubscribeModal
+        item={item}
+        open={modal === SubModal.SubscribeForm}
+        onClose={onSubFormClose}
+        // refetch on submit
+        onSubmit={onSubFormSubmit}
+        initialState={editForm}
+      />
+      <ItemSubscribeListModal
+        open={modal === SubModal.Subscribes}
+        onClose={() => setModal(SubModal.None)}
+        subscriptions={data?.subscriptions || []}
+        onEdit={onEditClick}
+        onDelete={onDeleteClick}
+      />
+    </>
+  );
+};
+
 export const ItemBannerCard: FC<PropsWithItem> = ({ item }) => {
-  const [open, setOpen] = useState(false);
   return (
     <>
       <Paper className={clsx(styles["item-banner-card"], "column")}>
@@ -285,22 +526,8 @@ export const ItemBannerCard: FC<PropsWithItem> = ({ item }) => {
         <div className={styles["item-price"]}>
           {item.lowestPrice?.price?.toString() || "No Listing"}
         </div>
-
-        <div className={clsx(styles["item-actions"], "column")}>
-          <Button
-            className={styles["sub-btn"]}
-            variant="contained"
-            onClick={() => setOpen(true)}
-          >
-            Subscribe
-          </Button>
-        </div>
+        <ItemSubRow item={item} />
       </Paper>
-      <ItemSubscribeModal
-        item={item}
-        open={open}
-        onClose={() => setOpen(false)}
-      />
     </>
   );
 };

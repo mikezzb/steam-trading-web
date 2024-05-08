@@ -26,6 +26,10 @@ class UIStore {
   enqueueError(message: string) {
     this.enqueueSnackbar({ message });
   }
+
+  success(message: string) {
+    this.enqueueSnackbar({ message });
+  }
 }
 
 export default UIStore;
