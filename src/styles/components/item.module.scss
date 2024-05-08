@@ -96,3 +96,37 @@
 .item-breadcrumb {
   margin-left: 0;
 }
+
+.sub-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 700px;
+
+  padding: 32px;
+
+  h6 {
+    margin-bottom: 8px;
+  }
+}
+
+.sub-form {
+  :global(.label) {
+    margin: 16px 0 12px 0;
+  }
+
+  .sub-submit-btn {
+    margin-top: 24px;
+    height: 46px;
+  }
+}
+
+.chip-options {
+  column-gap: 8px;
+
+  > * {
+    text-transform: capitalize;
+  }
+}

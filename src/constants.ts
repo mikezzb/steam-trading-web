@@ -37,3 +37,28 @@ export const MarketNames = {
 };
 
 export const BUFF_ITEM_PREVIEW_BASE_URL = "https://buff.163.com/goods";
+
+export const PatternSeeds = {
+  min: 1,
+  max: 999,
+};
+
+export const SubNotiTypes: Record<
+  string,
+  {
+    name: string;
+    label: string;
+    idHint: string;
+  }
+> = {
+  telegram: {
+    name: "telegram",
+    label: "Telegram",
+    idHint: "Telegram Chat ID",
+  },
+  email: {
+    name: "email",
+    label: "Email",
+    idHint: "Email Address",
+  },
+};

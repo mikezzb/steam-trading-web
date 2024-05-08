@@ -12,6 +12,7 @@ type TextFieldProps = {
   inputRef?: React.RefObject<HTMLInputElement | HTMLTextAreaElement>;
   label?: string;
   disabled?: boolean;
+  placeholder?: string;
 };
 
 const TextField: FC<
@@ -47,7 +48,9 @@ const TextField: FC<
         onBlur={onBlur}
         disabled={disabled}
       />
-      {Boolean(error) && <div className={styles.errorLabel}>{error}</div>}
+      {Boolean(error) && (
+        <div className={clsx(styles["error-label"], "label")}>{error}</div>
+      )}
     </>
   );
 };

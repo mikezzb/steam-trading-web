@@ -15,7 +15,7 @@ import {
   TransactionDaysDataDTO,
   TransactionPageData,
 } from "@/types/apis";
-import { UserDTO } from "@/types/dtos";
+import { SubscriptionDTO, UserDTO } from "@/types/dtos";
 import { ItemFiltersData } from "@/types/transformed";
 
 export const ApiRoutes = {
@@ -24,6 +24,7 @@ export const ApiRoutes = {
   users: "users",
   transactions: "transactions",
   listings: "listings",
+  subscriptions: "subscriptions",
 };
 
 export const getItem = async (itemId: string) => {
@@ -85,6 +86,14 @@ export const signup = async (body: SignUpForm) => {
     { body, method: "POST" },
     "no-cache"
   );
+};
+
+// Owner ID will be set by the server from the token
+type SubscribeItemForm = Omit<SubscriptionDTO, "_id" | "ownerId">;
+
+export const subscribeItem = async (body: SubscribeItemForm) => {
+  const endpoint = `${ApiRoutes.subscriptions}`;
+  return fetchData<SubscriptionDTO>(endpoint, { body, method: "POST" });
 };
 
 export const getItemTransactionsByDays = async (

@@ -39,7 +39,8 @@ export interface ListingDTO {
 export interface SubscriptionDTO {
   _id: string;
   name: string;
-  rarity?: string;
+  rarities?: string[];
+  paintSeeds?: number[];
   maxPremium?: string;
   notiType: string;
   notiId: string;

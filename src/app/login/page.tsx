@@ -30,6 +30,19 @@ const LoginForm: FC<LoginFormProps> = ({ onSubmit, fields, loading }) => {
       password: "",
     }
   );
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    const requiredFields = fields.filter((field) => !form[field]);
+    if (requiredFields.length) {
+      requiredFields.forEach((field) => {
+        newErrors[field] = "Required";
+      });
+    }
+    setErrors(newErrors);
+    return !requiredFields.length;
+  };
 
   const handleChange = (e: any, label: string) => {
     setForm({ [label]: e.target.value });
@@ -37,6 +50,7 @@ const LoginForm: FC<LoginFormProps> = ({ onSubmit, fields, loading }) => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    if (!validate()) return;
     onSubmit(form);
   };
 
@@ -49,6 +63,7 @@ const LoginForm: FC<LoginFormProps> = ({ onSubmit, fields, loading }) => {
           label={field}
           value={form[field]}
           onChange={(e) => handleChange(e, field)}
+          error={errors[field]}
         />
       ))}
       <Button type="submit" variant="contained">
