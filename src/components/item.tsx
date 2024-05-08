@@ -403,7 +403,7 @@ enum SubModal {
 }
 
 const ItemSubRow: FC<PropsWithItem> = ({ item }) => {
-  const [modal, setModal] = useState(SubModal.Subscribes);
+  const [modal, setModal] = useState(SubModal.None);
   const [editForm, setEditForm] = useState<Subscription | null>(null);
   const uiStore = useUIContext();
 
@@ -511,6 +511,7 @@ const ItemSubRow: FC<PropsWithItem> = ({ item }) => {
         onEdit={onEditClick}
         onDelete={onDeleteClick}
       />
+      {deleteSubMutation.isPending && <Loading fixed />}
     </>
   );
 };
