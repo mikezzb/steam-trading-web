@@ -3,7 +3,7 @@ import { useUIContext, useUserContext } from "@/stores";
 import { AuthState } from "@/types/ui";
 import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ComponentType, FC, useEffect, useState } from "react";
 import Loading from "./loading";
 
@@ -21,6 +21,7 @@ const guard: HOC = (Component, options = {}) => {
     const userStore = useUserContext();
     const uiStore = useUIContext();
     const router = useRouter();
+    const pathname = usePathname();
 
     const { isPending, error, data, refetch } = useQuery({
       queryKey: ["user"],
@@ -53,12 +54,13 @@ const guard: HOC = (Component, options = {}) => {
       switch (authState) {
         case AuthState.LOGGED_OUT:
           // Redirect to login page
-          router.push("/login");
+          const params = new URLSearchParams({ redirect: pathname });
+          router.push(`/login?${params}`);
           break;
         default:
           break;
       }
-    }, [userStore, authState, router]);
+    }, [userStore, authState, router, pathname]);
 
     useEffect(() => {
       if (error) {

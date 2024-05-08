@@ -4,7 +4,6 @@ import "@/styles/globals.scss";
 import { QueryProvider } from "@/apis/QueryProvider";
 import { AppConfig } from "@/config";
 import Header from "@/components/header";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import StoreProvider from "@/stores";
 import Snackbars from "@/components/snackbars";
 import ThemeProviderWrapper from "@/components/theme";
@@ -50,7 +49,6 @@ const App: React.FC<Props> = ({ children }) => {
               <Header />
               {children}
             </div>
-            <ReactQueryDevtools initialIsOpen={false} />
             <Snackbars />
           </ThemeProviderWrapper>
         </QueryProvider>
