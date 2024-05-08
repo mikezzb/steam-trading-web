@@ -1,8 +1,8 @@
-import { fetchData } from "./utils";
+import { FetchDataParams, fetchData } from "./utils";
 
 export const fetchServerData = async <T = any>(
   endpoint: string,
-  params: FetchParams = {}
+  params: FetchDataParams = {}
 ) => {
   return fetchData<T>(endpoint, {
     ...params,

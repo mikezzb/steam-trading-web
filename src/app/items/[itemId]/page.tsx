@@ -17,7 +17,7 @@ type Props = {
 
 const Page: FC<Props> = (props) => <ItemPage params={props.params} />;
 
-export const fetchAllItems = async () => {
+const fetchAllItems = async () => {
   const items: ItemDTO[] = [];
   let totalPages = 1;
   let page = 1;

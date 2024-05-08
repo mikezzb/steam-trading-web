@@ -6,7 +6,7 @@ const defaultHeaders = {
   "Content-Type": "application/json",
 };
 
-type FetchDataParams = FetchParams & {
+export type FetchDataParams = FetchParams & {
   // Remove empty values from body, default is true
   removeEmptyBodyValues?: boolean;
 };
